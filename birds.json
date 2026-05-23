@@ -906,7 +906,7 @@
     "habitat": "coast",
     "migratory": "resident",
     "rarity": "scarce",
-    "seen": false,
+    "seen": true,
     "photos": []
   },
   {
