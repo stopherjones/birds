@@ -1306,7 +1306,7 @@
     "habitat": "wetland",
     "migratory": "resident",
     "rarity": "common",
-    "seen": false,
+    "seen": true,
     "photos": []
   },
   {
