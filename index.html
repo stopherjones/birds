@@ -1,0 +1,101 @@
+<div class="bird-page">
+
+  <h1 class="page-title">UK Birds</h1>
+  <p class="page-subtitle">A photographic journey through 260 species</p>
+
+  <!-- FILTER BAR -->
+  <div class="filter-bar">
+    <select id="filter-type">
+      <option value="">All Types</option>
+    </select>
+
+    <select id="filter-habitat">
+      <option value="">All Habitats</option>
+    </select>
+
+    <select id="filter-rarity">
+      <option value="">All Rarities</option>
+    </select>
+
+    <select id="filter-migratory">
+      <option value="">All Seasons</option>
+    </select>
+  </div>
+
+  <!-- GALLERY GRID -->
+  <div id="bird-gallery" class="bird-gallery"></div>
+
+</div>
+
+<script src="/birds.json"></script>
+<script>
+  // Load birds.json (already included above)
+  const birds = window.birds;
+
+  const gallery = document.getElementById('bird-gallery');
+
+  // Populate filter dropdowns dynamically
+  function populateFilters() {
+    const typeSet = new Set();
+    const habitatSet = new Set();
+    const raritySet = new Set();
+    const migratorySet = new Set();
+
+    birds.forEach(b => {
+      typeSet.add(b.type);
+      habitatSet.add(b.habitat);
+      raritySet.add(b.rarity);
+      migratorySet.add(b.migratory);
+    });
+
+    fillSelect('filter-type', typeSet);
+    fillSelect('filter-habitat', habitatSet);
+    fillSelect('filter-rarity', raritySet);
+    fillSelect('filter-migratory', migratorySet);
+  }
+
+  function fillSelect(id, values) {
+    const select = document.getElementById(id);
+    [...values].sort().forEach(v => {
+      const opt = document.createElement('option');
+      opt.value = v;
+      opt.textContent = v.charAt(0).toUpperCase() + v.slice(1);
+      select.appendChild(opt);
+    });
+  }
+
+  // Render gallery
+  function renderGallery() {
+    const type = document.getElementById('filter-type').value;
+    const habitat = document.getElementById('filter-habitat').value;
+    const rarity = document.getElementById('filter-rarity').value;
+    const migratory = document.getElementById('filter-migratory').value;
+
+    gallery.innerHTML = '';
+
+    birds
+      .filter(b => !type || b.type === type)
+      .filter(b => !habitat || b.habitat === habitat)
+      .filter(b => !rarity || b.rarity === rarity)
+      .filter(b => !migratory || b.migratory === migratory)
+      .forEach(bird => {
+        const card = document.createElement('div');
+        card.className = 'bird-card' + (bird.seen ? '' : ' unseen');
+
+        card.innerHTML = `
+          <img src="/images/bird-icon.png" class="bird-icon" alt="${bird.name}">
+          <div class="bird-name">${bird.name}</div>
+          <div class="bird-meta">${bird.type} • ${bird.habitat}</div>
+        `;
+
+        gallery.appendChild(card);
+      });
+  }
+
+  populateFilters();
+  renderGallery();
+
+  document.querySelectorAll('.filter-bar select').forEach(sel => {
+    sel.addEventListener('change', renderGallery);
+  });
+</script>
