@@ -1,77 +1,302 @@
-.bird-page {
-  max-width: 1100px;
-  margin: 0 auto;
-  padding: 20px;
-  background: url('/images/parchment-texture.jpg');
-  background-size: cover;
+/* ==========================================================================
+   1. GLOBAL FRAMEWORK RESETS & PURE COUNTER STYLING
+   ========================================================================== */
+body {
+    font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+    margin: 0;
+    padding: 1.5rem;
+    background: #fafafa;
+    color: #222;
 }
 
-.page-title {
-  font-family: "Georgia", serif;
-  font-size: 2.4rem;
-  text-align: center;
-  margin-bottom: 0;
+.main-title {
+    text-align: center;
+    margin-bottom: 0.25rem;
+    padding-top: 1.5rem;
+    font-size: 2rem;
+    font-weight: 700;
 }
 
-.page-subtitle {
-  text-align: center;
-  margin-top: 4px;
-  font-style: italic;
-  opacity: 0.8;
+.subtitle {
+    text-align: center;
+    margin-bottom: 1.5rem;
+    color: #666;
+    font-size: 0.95rem;
 }
 
+/* Exact replica of your original unboxed styling rule */
+.main-title + .stat-display,
+.stat-display {
+    display: block;
+    text-align: center;
+    margin: 0 0 1rem 0;
+    font-size: 0.95rem;
+    color: #555;
+    font-weight: 500;
+    padding: 0.15rem 0;
+    background: none;
+    border: none;
+    box-shadow: none;
+    width: 100%;
+}
+
+/* ==========================================================================
+   2. SHADED DETAILED MULTI-ROW CONTROL PANEL
+   ========================================================================== */
 .filter-bar {
-  display: flex;
-  gap: 10px;
-  margin: 20px 0;
-  flex-wrap: wrap;
+    position: sticky;
+    top: 0;
+    background: #f0f0f0; /* Precise color shade background from previous design */
+    padding: 1rem 1.25rem;
+    border-radius: 4px;
+    margin-bottom: 2.5rem;
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+    z-index: 900;
+    box-sizing: border-box;
 }
 
-.filter-bar select {
-  padding: 8px 12px;
-  border-radius: 6px;
-  border: 1px solid #ccc;
-  background: #faf7f2;
-  font-size: 0.9rem;
+/* Structural Row Blocks */
+.filter-row {
+    display: flex;
+    width: 100%;
+    align-items: flex-end;
+    box-sizing: border-box;
 }
 
-.bird-gallery {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
-  gap: 18px;
+/* Row 1 Positioning: Left and Right Aligned Wings */
+.filter-row.row-top {
+    justify-content: space-between;
+    gap: 1.5rem;
 }
 
-.bird-card {
-  background: rgba(255, 255, 255, 0.85);
-  border-radius: 10px;
-  padding: 12px;
-  text-align: center;
-  box-shadow: 0 2px 4px rgba(0,0,0,0.15);
-  transition: transform 0.15s ease;
+/* Row 2 Positioning: Full Box Stretching Grid */
+.filter-row.row-bottom {
+    justify-content: flex-start;
 }
 
-.bird-card:hover {
-  transform: translateY(-3px);
+/* Title Label Stack Above Input Fields */
+.filter-group {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0.4rem;
 }
 
-.bird-card.unseen {
-  filter: grayscale(100%) brightness(0.7);
-  opacity: 0.7;
+.filter-group.search {
+    width: 100%; /* Spans completely wide across Row 2 */
 }
 
-.bird-icon {
-  width: 60px;
-  height: 60px;
-  opacity: 0.8;
-  margin-bottom: 8px;
+/* Form Headings Labels */
+.filter-group label,
+.filter-group .control-label {
+    font-size: 0.9rem;
+    font-weight: 600;
+    color: #444;
+    display: block;
+    margin: 0;
+    padding: 0;
 }
 
-.bird-name {
-  font-weight: bold;
-  font-size: 1rem;
+/* Interactive Inputs Elements formatting */
+.filter-group select,
+.filter-group input[type="text"] {
+    padding: 0.45rem 0.6rem;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    font-size: 0.9rem;
+    background: #fff;
+    color: #222;
+    outline: none;
+    box-sizing: border-box;
 }
 
-.bird-meta {
-  font-size: 0.8rem;
-  opacity: 0.7;
+.filter-group select {
+    min-width: 160px;
+}
+
+.filter-group input[type="text"] {
+    width: 100%; /* Fills layout rows seamlessly */
+}
+
+/* Selection Elements Positioning Alignment */
+.checkbox-group {
+    display: flex;
+    gap: 1rem;
+    align-items: center;
+    padding: 0.45rem 0; /* Align heights symmetrically with neighboring pickers */
+}
+
+.checkbox-group label {
+    display: flex;
+    align-items: center;
+    gap: 0.35rem;
+    font-weight: 400;
+    cursor: pointer;
+}
+
+.checkbox-group input[type="checkbox"] {
+    margin: 0;
+    width: 1rem;
+    height: 1rem;
+    cursor: pointer;
+}
+
+/* ==========================================================================
+   3. SPECIES GRID MATRIX DECK
+   ========================================================================== */
+.gallery {
+    max-width: 1200px;
+    margin: 0 auto;
+}
+
+.gallery-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+    gap: 1.25rem;
+    margin-bottom: 2.5rem;
+}
+
+.gallery-item {
+    background: #fff;
+    border-radius: 4px;
+    overflow: hidden;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
+    transition: transform 0.15s ease, box-shadow 0.15s ease;
+    border: 1px solid #e2e2e2;
+}
+
+.gallery-item:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.12);
+}
+
+.flag-wrapper {
+    width: 100%;
+    height: 115px;
+    overflow: hidden;
+    background: #eaeaea;
+}
+
+.gallery-image {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+}
+
+/* Custom Image Grayscale filter for Unseen species */
+.gallery-image.greyed-out {
+    filter: grayscale(100%) contrast(0.85);
+    opacity: 0.35;
+}
+
+.caption {
+    padding: 0.6rem;
+    font-size: 0.85rem;
+    font-weight: 600;
+    text-align: center;
+    color: #333;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.empty-state {
+    grid-column: 1 / -1;
+    text-align: center;
+    padding: 4rem;
+    color: #666;
+    background: #fff;
+    border-radius: 4px;
+    border: 1px dashed #bbb;
+    font-weight: 500;
+}
+
+/* ==========================================================================
+   4. PRESENTATION DIALOG OVERLAYS
+   ========================================================================== */
+.popup-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.5);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    opacity: 0;
+    visibility: hidden;
+    transition: opacity 0.2s ease, visibility 0.2s ease;
+    z-index: 1000;
+    padding: 1rem;
+    box-sizing: border-box;
+}
+
+.popup-overlay.active {
+    opacity: 1;
+    visibility: visible;
+}
+
+.popup-box {
+    background: #fff;
+    padding: 1.25rem;
+    border-radius: 6px;
+    width: 100%;
+    max-width: 440px;
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.2);
+    box-sizing: border-box;
+}
+
+.popup-box h2 {
+    margin-top: 0;
+    margin-bottom: 1rem;
+    font-size: 1.4rem;
+    text-align: center;
+    color: #111;
+}
+
+.close-btn {
+    background: #333;
+    color: #fff;
+    font-weight: 600;
+    font-size: 0.9rem;
+    border-radius: 4px;
+    transition: background-color 0.2s;
+}
+
+.close-btn:hover {
+    background: #000;
+}
+
+/* ==========================================================================
+   5. PORTRAIT & LANDSCAPE MOBILE MEDIA ADAPTATIONS
+   ========================================================================== */
+@media (max-width: 600px) {
+    .filter-row.row-top {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 1rem;
+    }
+
+    .filter-group, 
+    .filter-group select {
+        width: 100%;
+    }
+
+    .checkbox-group {
+        width: 100%;
+        justify-content: flex-start;
+    }
+
+    .gallery-grid {
+        grid-template-columns: repeat(auto-fill, minmax(130px, 1fr));
+        gap: 1rem;
+    }
+
+    .flag-wrapper {
+        height: 95px;
+    }
 }

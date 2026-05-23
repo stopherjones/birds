@@ -1,101 +1,50 @@
-<div class="bird-page">
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Birding Life List</title>
+    <link rel="icon" href="images/bird-icon.png" type="image/png">
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
 
-  <h1 class="page-title">UK Birds</h1>
-  <p class="page-subtitle">A photographic journey through 260 species</p>
+    <h1 class="main-title">Birding Life List</h1>
 
-  <!-- FILTER BAR -->
-  <div class="filter-bar">
-    <select id="filter-type">
-      <option value="">All Types</option>
-    </select>
+    <div class="stat-display">
+        <span id="statText">0 species seen out of 0 total tracked species</span>
+    </div>
 
-    <select id="filter-habitat">
-      <option value="">All Habitats</option>
-    </select>
+    <p class="subtitle">Click on a bird card to view high-resolution photos, identification metrics, and encounter logs.</p>
 
-    <select id="filter-rarity">
-      <option value="">All Rarities</option>
-    </select>
+    <nav class="filter-bar index-bar">
+        <div class="filter-row row-top">
+            <div class="filter-group content-type">
+                <span class="control-label">Sighting Status</span>
+                <div class="checkbox-group">
+                    <label>Seen <input type="checkbox" id="filterSeen" checked></label>
+                    <label>Unseen <input type="checkbox" id="filterUnseen" checked></label>
+                </div>
+            </div>
 
-    <select id="filter-migratory">
-      <option value="">All Seasons</option>
-    </select>
-  </div>
+            <div class="filter-group type-picker">
+                <label for="typeFilter">Bird Type</label>
+                <select id="typeFilter">
+                    <option value="all">All Types</option>
+                    </select>
+            </div>
+        </div>
 
-  <!-- GALLERY GRID -->
-  <div id="bird-gallery" class="bird-gallery"></div>
+        <div class="filter-row row-bottom">
+            <div class="filter-group search">
+                <label for="searchInput">Search</label>
+                <input type="text" id="searchInput" placeholder="Find a species...">
+            </div>
+        </div>
+    </nav>
 
-</div>
+    <div id="gallery" class="gallery"></div>
 
-<script src="/birds.json"></script>
-<script>
-  // Load birds.json (already included above)
-  const birds = window.birds;
-
-  const gallery = document.getElementById('bird-gallery');
-
-  // Populate filter dropdowns dynamically
-  function populateFilters() {
-    const typeSet = new Set();
-    const habitatSet = new Set();
-    const raritySet = new Set();
-    const migratorySet = new Set();
-
-    birds.forEach(b => {
-      typeSet.add(b.type);
-      habitatSet.add(b.habitat);
-      raritySet.add(b.rarity);
-      migratorySet.add(b.migratory);
-    });
-
-    fillSelect('filter-type', typeSet);
-    fillSelect('filter-habitat', habitatSet);
-    fillSelect('filter-rarity', raritySet);
-    fillSelect('filter-migratory', migratorySet);
-  }
-
-  function fillSelect(id, values) {
-    const select = document.getElementById(id);
-    [...values].sort().forEach(v => {
-      const opt = document.createElement('option');
-      opt.value = v;
-      opt.textContent = v.charAt(0).toUpperCase() + v.slice(1);
-      select.appendChild(opt);
-    });
-  }
-
-  // Render gallery
-  function renderGallery() {
-    const type = document.getElementById('filter-type').value;
-    const habitat = document.getElementById('filter-habitat').value;
-    const rarity = document.getElementById('filter-rarity').value;
-    const migratory = document.getElementById('filter-migratory').value;
-
-    gallery.innerHTML = '';
-
-    birds
-      .filter(b => !type || b.type === type)
-      .filter(b => !habitat || b.habitat === habitat)
-      .filter(b => !rarity || b.rarity === rarity)
-      .filter(b => !migratory || b.migratory === migratory)
-      .forEach(bird => {
-        const card = document.createElement('div');
-        card.className = 'bird-card' + (bird.seen ? '' : ' unseen');
-
-        card.innerHTML = `
-          <img src="/images/bird-icon.png" class="bird-icon" alt="${bird.name}">
-          <div class="bird-name">${bird.name}</div>
-          <div class="bird-meta">${bird.type} • ${bird.habitat}</div>
-        `;
-
-        gallery.appendChild(card);
-      });
-  }
-
-  populateFilters();
-  renderGallery();
-
-  document.querySelectorAll('.filter-bar select').forEach(sel => {
-    sel.addEventListener('change', renderGallery);
-  });
-</script>
+    <script src="script.js"></script>
+</body>
+</html>
