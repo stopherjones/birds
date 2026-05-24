@@ -1846,7 +1846,7 @@
     "habitat": "coast",
     "migratory": "summer",
     "rarity": "common",
-    "seen": false,
+    "seen": true,
     "photos": []
   },
   {
