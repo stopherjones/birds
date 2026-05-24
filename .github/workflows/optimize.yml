@@ -3,10 +3,12 @@ name: Auto Optimize Bird Photos
 on:
   push:
     paths:
-      - 'images/birds/**' # Only run when images are added or updated
+      - 'images/birds/**'
+      - 'birds.json' # Now it will also trigger if you update your JSON database!
+  workflow_dispatch: # <--- THIS adds your manual "Run workflow" button!
 
 permissions:
-  contents: write # Allows GitHub to save the optimized photos back to your repo
+  contents: write
 
 jobs:
   optimize:
@@ -35,7 +37,6 @@ jobs:
           os.makedirs(thumb_dir, exist_ok=True)
 
           for filename in os.listdir(bird_dir):
-              # Skip folders (like the thumbs folder itself)
               if os.path.isdir(os.path.join(bird_dir, filename)):
                   continue
                   
@@ -44,15 +45,11 @@ jobs:
                   thumb_path = os.path.join(thumb_dir, filename)
                   
                   with Image.open(img_path) as img:
-                      # 1. Compress the master high-res image right in place
-                      # This shrinks your 900KB file to ~150KB without losing visible quality
-                      if os.path.getsize(img_path) > 200000: # Only compress if greater than ~200KB
+                      if os.path.getsize(img_path) > 200000:
                           img.save(img_path, "JPEG", quality=80, optimize=True)
                           print(f"Optimized master: {filename}")
                       
-                      # 2. Generate a small crisp thumbnail for the main gallery grid
                       if not os.path.exists(thumb_path):
-                          # Create a thumbnail copy maxed at 400px wide/tall
                           img.thumbnail((400, 400))
                           img.save(thumb_path, "JPEG", quality=75, optimize=True)
                           print(f"Generated thumbnail for: {filename}")
