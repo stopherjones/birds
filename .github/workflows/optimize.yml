@@ -1,0 +1,64 @@
+name: Auto Optimize Bird Photos
+
+on:
+  push:
+    paths:
+      - 'images/birds/**' # Only run when images are added or updated
+
+permissions:
+  contents: write # Allows GitHub to save the optimized photos back to your repo
+
+jobs:
+  optimize:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-module-cache: true
+          python-version: '3.x'
+
+      - name: Install Image Processor
+        run: pip install Pillow
+
+      - name: Compress Masters and Generate Thumbnails
+        run: |
+          python - <<EOF
+          import os
+          from PIL import Image
+
+          bird_dir = "images/birds"
+          thumb_dir = os.path.join(bird_dir, "thumbs")
+          os.makedirs(thumb_dir, exist_ok=True)
+
+          for filename in os.listdir(bird_dir):
+              # Skip folders (like the thumbs folder itself)
+              if os.path.isdir(os.path.join(bird_dir, filename)):
+                  continue
+                  
+              if filename.lower().endswith(('.jpg', '.jpeg', '.png')):
+                  img_path = os.path.join(bird_dir, filename)
+                  thumb_path = os.path.join(thumb_dir, filename)
+                  
+                  with Image.open(img_path) as img:
+                      # 1. Compress the master high-res image right in place
+                      # This shrinks your 900KB file to ~150KB without losing visible quality
+                      if os.path.getsize(img_path) > 200000: # Only compress if greater than ~200KB
+                          img.save(img_path, "JPEG", quality=80, optimize=True)
+                          print(f"Optimized master: {filename}")
+                      
+                      # 2. Generate a small crisp thumbnail for the main gallery grid
+                      if not os.path.exists(thumb_path):
+                          # Create a thumbnail copy maxed at 400px wide/tall
+                          img.thumbnail((400, 400))
+                          img.save(thumb_path, "JPEG", quality=75, optimize=True)
+                          print(f"Generated thumbnail for: {filename}")
+          EOF
+
+      - name: Commit Optimized Images Automatically
+        uses: stefanzweifel/git-auto-commit-action@v5
+        with:
+          commit_message: "Automated image optimization and thumbnail generation [skip ci]"
