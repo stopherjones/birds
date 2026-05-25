@@ -180,8 +180,12 @@ function createBirdDetailPopup(bird) {
                 <tr style="border-bottom: 1px solid #eee;"><td style="padding: 0.5rem 0; color: #666; font-weight: 500;">Environment:</td><td style="padding: 0.5rem 0; font-weight: 600; text-transform: capitalize;">${bird.habitat || 'N/A'}</td></tr>
                 <tr style="border-bottom: 1px solid #eee;"><td style="padding: 0.5rem 0; color: #666; font-weight: 500;">Migration Status:</td><td style="padding: 0.5rem 0; font-weight: 600; text-transform: capitalize;">${bird.migratory || 'N/A'}</td></tr>
                 <tr style="border-bottom: 1px solid #eee;"><td style="padding: 0.5rem 0; color: #666; font-weight: 500;">Rarity Index:</td><td style="padding: 0.5rem 0; font-weight: 600; text-transform: capitalize;">${bird.rarity || 'N/A'}</td></tr>
-                <tr><td style="padding: 0.5rem 0; color: #666; font-weight: 500;">Sighting Track:</td><td style="padding: 0.5rem 0; font-weight: 600;">${bird.seen ? '<span style="color: #2e7d32;">✔ Logged</span>' : '<span style="color: #c62828;">❌ Unseen</span>'}</td></tr>
-            </table>
+                <tr style="border-bottom: 1px solid #eee;">
+                    <td style="padding: 0.5rem 0; color: #666; font-weight: 500;">Location Seen:</td>
+                    <td style="padding: 0.5rem 0; font-weight: 600; color: ${bird.seen ? '#111' : '#aaa'};">
+                        ${bird.seen ? (bird.where_seen || 'Not recorded') : '-'}
+                    </td>
+                </tr></table>
         </div>
 
         <div style="text-align: center; margin-top: 1rem;">
