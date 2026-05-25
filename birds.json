@@ -5,7 +5,7 @@
     "type": "warbler",
     "habitat": "wetland",
     "migratory": "UK passage",
-    "rarity": "localised",
+    "rarity": "scarce - less than 1,000",
     "seen": false,
     "where_seen": "",
     "photos": []
@@ -16,7 +16,7 @@
     "type": "seabird",
     "habitat": "coastal",
     "migratory": "UK passage",
-    "rarity": "localised",
+    "rarity": "uncommon - 1,000 to 10,000",
     "seen": false,
     "where_seen": "",
     "photos": []
@@ -27,7 +27,7 @@
     "type": "seabird",
     "habitat": "coastal",
     "migratory": "UK passage",
-    "rarity": "localised",
+    "rarity": "common - 10,000 to 100,000",
     "seen": false,
     "where_seen": "",
     "photos": []
@@ -38,7 +38,7 @@
     "type": "wader",
     "habitat": "wetland",
     "migratory": "resident",
-    "rarity": "localised",
+    "rarity": "common - 10,000 to 100,000",
     "seen": false,
     
     "photos": []
@@ -49,7 +49,7 @@
     "type": "seabird",
     "habitat": "coastal",
     "migratory": "UK passage",
-    "rarity": "localised",
+    "rarity": "uncommon - 1,000 to 10,000",
     "seen": false,
     "where_seen": "",
     "photos": []
@@ -60,7 +60,7 @@
     "type": "wader",
     "habitat": "wetland",
     "migratory": "Winter visitor",
-    "rarity": "localised",
+    "rarity": "common - 10,000 to 100,000",
     "seen": false,
     "where_seen": "",
     "photos": []
@@ -71,7 +71,7 @@
     "type": "owl",
     "habitat": "woodland",
     "migratory": "resident",
-    "rarity": "uncommon",
+    "rarity": "uncommon - 1,000 to 10,000",
     "seen": true,
     "where_seen": "Pocklington Canal",
     "photos": []
@@ -82,7 +82,7 @@
     "type": "waterfowl",
     "habitat": "coastal",
     "migratory": "Winter visitor",
-    "rarity": "localised",
+    "rarity": "uncommon - 1,000 to 10,000",
     "seen": false,
     "where_seen": "",
     "photos": []
@@ -93,7 +93,7 @@
     "type": "tits_and_finches",
     "habitat": "wetland",
     "migratory": "resident",
-    "rarity": "scarse",
+    "rarity": "scarce - less than 1,000",
     "seen": true,
     "where_seen": "RSPB St Aidan's",
     "photos": []
@@ -104,7 +104,7 @@
     "type": "waterfowl",
     "habitat": "wetland",
     "migratory": "Winter visitor",
-    "rarity": "localised",
+    "rarity": "uncommon - 1,000 to 10,000",
     "seen": false,
     "where_seen": "",
     "photos": []
@@ -115,7 +115,7 @@
     "type": "wader",
     "habitat": "wetland",
     "migratory": "resident",
-    "rarity": "rare",
+    "rarity": "scarce - less than 1,000",
     "seen": false,
     "where_seen": "",
     "photos": []
@@ -126,7 +126,7 @@
     "type": "grouse",
     "habitat": "upland",
     "migratory": "resident",
-    "rarity": "uncommon",
+    "rarity": "uncommon - 1,000 to 10,000",
     "seen": false,
     "where_seen": "",
     "photos": []
