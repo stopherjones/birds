@@ -1,6 +1,6 @@
 /**
- * Birding Life List Engine
- * Dynamically handles multi-tier filter rules and self-populates dropdown properties.
+ * Birding Life List Engine - Basic Edition
+ * Handles text search, seen status filtering, and fixed alphabetical sorting.
  */
 
 const CONFIG = {
@@ -16,17 +16,7 @@ const DOM = {
     gallery: document.getElementById('gallery'),
     searchInput: document.getElementById('searchInput'),
     filterSeen: document.getElementById('filterSeen'),
-    filterUnseen: document.getElementById('filterUnseen'),
-    typeFilter: document.getElementById('typeFilter'),
-    sortOrder: document.getElementById('sortOrder') // Added sort reference mapping
-};
-
-// Strict rarity hierarchy sorting scale (Rarest down to Most Common)
-const RARITY_ORDER = {
-    'scarce': 1,
-    'uncommon': 2,
-    'common': 3,
-    'widespread': 4
+    filterUnseen: document.getElementById('filterUnseen')
 };
 
 document.addEventListener('DOMContentLoaded', () => {
@@ -41,10 +31,8 @@ function initApp() {
         })
         .then(data => {
             allBirds = data;
-            
             filteredBirds = [...allBirds];
             
-            populateTypeDropdown();
             setupFilterListeners();
             applyFiltersAndRender();
         })
@@ -58,53 +46,27 @@ function initApp() {
         });
 }
 
-/**
- * Automatically inspects the JSON database and populates the Type select box
- */
-function populateTypeDropdown() {
-    if (!DOM.typeFilter) return;
-    // Extract unique types and clear falsy values
-    const types = [...new Set(allBirds.map(bird => bird.type).filter(Boolean))];
-    types.sort((a, b) => a.localeCompare(b));
-
-    types.forEach(type => {
-        const option = document.createElement('option');
-        option.value = type.toLowerCase();
-        option.textContent = type.charAt(0).toUpperCase() + type.slice(1);
-        DOM.typeFilter.appendChild(option);
-    });
-}
-
 function setupFilterListeners() {
     if (DOM.searchInput) DOM.searchInput.addEventListener('input', applyFiltersAndRender);
     if (DOM.filterSeen) DOM.filterSeen.addEventListener('change', applyFiltersAndRender);
     if (DOM.filterUnseen) DOM.filterUnseen.addEventListener('change', applyFiltersAndRender);
-    if (DOM.typeFilter) DOM.typeFilter.addEventListener('change', applyFiltersAndRender);
-    if (DOM.sortOrder) DOM.sortOrder.addEventListener('change', applyFiltersAndRender); // Added sorting change listener
 }
 
 function applyFiltersAndRender() {
     const searchQuery = DOM.searchInput ? DOM.searchInput.value.toLowerCase().trim() : '';
     const showSeen = DOM.filterSeen ? DOM.filterSeen.checked : true;
     const showUnseen = DOM.filterUnseen ? DOM.filterUnseen.checked : true;
-    const selectedType = DOM.typeFilter ? DOM.typeFilter.value : 'all';
 
     filteredBirds = allBirds.filter(bird => {
-        // 1. Text Search Box Parsing
-        const matchesSearch = !searchQuery || 
-            bird.name.toLowerCase().includes(searchQuery) || 
-            (bird.type && bird.type.toLowerCase().includes(searchQuery));
+        // 1. Text Search Input Parsing (Matches against species name only)
+        const matchesSearch = !searchQuery || bird.name.toLowerCase().includes(searchQuery);
 
-        // 2. Status Checkbox Parsing
+        // 2. Sighting Checkbox Filter Status Parsing
         let matchesStatus = false;
         if (bird.seen && showSeen) matchesStatus = true;
         if (!bird.seen && showUnseen) matchesStatus = true;
 
-        // 3. Dynamic Bird Type Selection Menu Parsing
-        const matchesType = selectedType === 'all' || 
-            (bird.type && bird.type.toLowerCase() === selectedType);
-
-        return matchesSearch && matchesStatus && matchesType;
+        return matchesSearch && matchesStatus;
     });
 
     renderGalleryGrid();
@@ -120,29 +82,9 @@ function renderGalleryGrid() {
         return;
     }
 
-    // Fail-safe real-time check for the sorting layout control selection
-    const sortSelect = document.getElementById('sortOrder');
-    const currentSort = sortSelect ? sortSelect.value : 'az';
+    // Default Fixed Behavior: Always Sorted Alphabetically A-Z
+    const displayList = [...filteredBirds].sort((a, b) => a.name.localeCompare(b.name));
 
-    // Multi-tier Sorting Logic Engine
-    const displayList = [...filteredBirds].sort((a, b) => {
-        if (currentSort === 'rarity') {
-            // .split(' ')[0] extracts just the first word from "scarce - less than 1,000"
-            const firstWordA = a.rarity?.toLowerCase().trim().split(' ')[0];
-            const firstWordB = b.rarity?.toLowerCase().trim().split(' ')[0];
-
-            const weightA = RARITY_ORDER[firstWordA] || 99;
-            const weightB = RARITY_ORDER[firstWordB] || 99;
-            
-            if (weightA !== weightB) {
-                return weightA - weightB; // Rarest weights (1, 2) rise to the top
-            }
-        }
-        // Fallback default or secondary sorting rule: Alphabetical A-Z
-        return a.name.localeCompare(b.name);
-    });
-
-    // Build the structural fluid grid layout wrapper seamlessly
     const gridContainer = document.createElement('div');
     gridContainer.className = 'gallery-grid';
 
@@ -159,7 +101,6 @@ function renderGalleryGrid() {
         img.setAttribute('loading', 'lazy');
 
         if (bird.seen) {
-            // Pointing to the optimized thumbnails folder generated by GitHub Actions
             img.src = `${CONFIG.localImgDir}thumbs/${bird.code}.jpg`;
             img.alt = bird.name;
         } else {
@@ -204,22 +145,6 @@ function createBirdDetailPopup(bird) {
 
         <div class="popup-scroll-area" style="max-height: 40vh; overflow-y: auto; padding: 0 0.2rem;">
             <table style="width: 100%; border-collapse: collapse; margin-bottom: 0.5rem; font-size: 0.95rem;">
-                <tr style="border-bottom: 1px solid #eee;">
-                    <td style="padding: 0.5rem 0; color: #666; font-weight: 500;">Species Group:</td>
-                    <td style="padding: 0.5rem 0; font-weight: 600;">${bird.type || 'N/A'}</td>
-                </tr>
-                <tr style="border-bottom: 1px solid #eee;">
-                    <td style="padding: 0.5rem 0; color: #666; font-weight: 500;">Environment:</td>
-                    <td style="padding: 0.5rem 0; font-weight: 600;">${bird.habitat || 'N/A'}</td>
-                </tr>
-                <tr style="border-bottom: 1px solid #eee;">
-                    <td style="padding: 0.5rem 0; color: #666; font-weight: 500;">Migration Status:</td>
-                    <td style="padding: 0.5rem 0; font-weight: 600;">${bird.migratory || 'N/A'}</td>
-                </tr>
-                <tr style="border-bottom: 1px solid #eee;">
-                    <td style="padding: 0.5rem 0; color: #666; font-weight: 500;">Rarity Index:</td>
-                    <td style="padding: 0.5rem 0; font-weight: 600;">${bird.rarity || 'N/A'}</td>
-                </tr>
                 <tr style="border-bottom: 1px solid #eee;">
                     <td style="padding: 0.5rem 0; color: #666; font-weight: 500;">Location Seen:</td>
                     <td style="padding: 0.5rem 0; font-weight: 600; color: ${bird.seen ? '#111' : '#aaa'};">
