@@ -44,7 +44,7 @@ body {
    2. SHADED DETAILED MULTI-ROW CONTROL PANEL
    ========================================================================== */
 .filter-bar {
-    position: sticky;
+    position: relative;
     top: 0;
     background: #f0f0f0; /* Precise color shade background from previous design */
     padding: 1rem 1.25rem;

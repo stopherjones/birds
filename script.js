@@ -8,7 +8,6 @@ const CONFIG = {
     placeholderImg: 'images/bird-icon.png',
     localImgDir: 'images/birds/'
 };
-
 let allBirds = [];
 let filteredBirds = [];
 
@@ -18,7 +17,16 @@ const DOM = {
     searchInput: document.getElementById('searchInput'),
     filterSeen: document.getElementById('filterSeen'),
     filterUnseen: document.getElementById('filterUnseen'),
-    typeFilter: document.getElementById('typeFilter')
+    typeFilter: document.getElementById('typeFilter'),
+    sortOrder: document.getElementById('sortOrder') // Added sort reference mapping
+};
+
+// Strict rarity hierarchy sorting scale (Rarest down to Most Common)
+const RARITY_ORDER = {
+    'scarce': 1,
+    'uncommon': 2,
+    'common': 3,
+    'widespread': 4
 };
 
 document.addEventListener('DOMContentLoaded', () => {
@@ -33,6 +41,7 @@ function initApp() {
         })
         .then(data => {
             allBirds = data;
+            
             filteredBirds = [...allBirds];
             
             populateTypeDropdown();
@@ -54,10 +63,9 @@ function initApp() {
  */
 function populateTypeDropdown() {
     if (!DOM.typeFilter) return;
-    
     // Extract unique types and clear falsy values
     const types = [...new Set(allBirds.map(bird => bird.type).filter(Boolean))];
-    types.sort((a, b) => a.localeCompare(b.name));
+    types.sort((a, b) => a.localeCompare(b));
 
     types.forEach(type => {
         const option = document.createElement('option');
@@ -72,6 +80,7 @@ function setupFilterListeners() {
     if (DOM.filterSeen) DOM.filterSeen.addEventListener('change', applyFiltersAndRender);
     if (DOM.filterUnseen) DOM.filterUnseen.addEventListener('change', applyFiltersAndRender);
     if (DOM.typeFilter) DOM.typeFilter.addEventListener('change', applyFiltersAndRender);
+    if (DOM.sortOrder) DOM.sortOrder.addEventListener('change', applyFiltersAndRender); // Added sorting change listener
 }
 
 function applyFiltersAndRender() {
@@ -111,8 +120,27 @@ function renderGalleryGrid() {
         return;
     }
 
-    // Always sort the display catalog alphabetically A-Z
-    const displayList = [...filteredBirds].sort((a, b) => a.name.localeCompare(b.name));
+    // Fail-safe real-time check for the sorting layout control selection
+    const sortSelect = document.getElementById('sortOrder');
+    const currentSort = sortSelect ? sortSelect.value : 'az';
+
+    // Multi-tier Sorting Logic Engine
+    const displayList = [...filteredBirds].sort((a, b) => {
+        if (currentSort === 'rarity') {
+            // .split(' ')[0] extracts just the first word from "scarce - less than 1,000"
+            const firstWordA = a.rarity?.toLowerCase().trim().split(' ')[0];
+            const firstWordB = b.rarity?.toLowerCase().trim().split(' ')[0];
+
+            const weightA = RARITY_ORDER[firstWordA] || 99;
+            const weightB = RARITY_ORDER[firstWordB] || 99;
+            
+            if (weightA !== weightB) {
+                return weightA - weightB; // Rarest weights (1, 2) rise to the top
+            }
+        }
+        // Fallback default or secondary sorting rule: Alphabetical A-Z
+        return a.name.localeCompare(b.name);
+    });
 
     // Build the structural fluid grid layout wrapper seamlessly
     const gridContainer = document.createElement('div');
@@ -185,7 +213,8 @@ function createBirdDetailPopup(bird) {
                     <td style="padding: 0.5rem 0; font-weight: 600; color: ${bird.seen ? '#111' : '#aaa'};">
                         ${bird.seen ? (bird.where_seen || 'Not recorded') : '-'}
                     </td>
-                </tr></table>
+                </tr>
+            </table>
         </div>
 
         <div style="text-align: center; margin-top: 1rem;">
