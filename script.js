@@ -146,7 +146,7 @@ function createBirdDetailPopup(bird) {
         <div class="popup-scroll-area" style="max-height: 40vh; overflow-y: auto; padding: 0 0.2rem;">
             <table style="width: 100%; border-collapse: collapse; margin-bottom: 0.5rem; font-size: 0.95rem;">
                 <tr style="border-bottom: 1px solid #eee;">
-                    <td style="padding: 0.5rem 0; color: #666; font-weight: 500;">Location Seen:</td>
+                    <td style="padding: 0.5rem 0; color: #666; font-weight: 500;">Photo taken:</td>
                     <td style="padding: 0.5rem 0; font-weight: 600; color: ${bird.seen ? '#111' : '#aaa'};">
                         ${bird.seen ? (bird.where_seen || 'Not recorded') : '-'}
                     </td>
