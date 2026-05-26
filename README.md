@@ -49,11 +49,22 @@ Each bird is structured as a JSON object.
 ]
 
 ```
-### Rarity Tier Logic Weights
+### Simplified bird groupings
+  Water birds and waders
+  Seabirds
+  Raptors and owls
+  Game and ground birds
+  Songbirds
+  Corvids and shrikes
+  Pigeons and doves
+  Tree birds
+
+### Simplified rarity groupings
  1. scarce - less than 1 000 (Highest sorting rank / rarest)
  2. uncommon - 1,000 to 10,000
  3. common - 10,000 to 100,000
  4. widespread - more than 100,000 (Lowest sorting rank / most abundant)
 *Note: If two birds share an identical rarity tier, the engine falls back to ordering them alphabetically.*
+
 ## ⚙️ Automated Photo Workflow & Mobile Workaround
 The project utilizes an automated **GitHub Actions** helper workflow to handle high-resolution image compression and generate grid thumbnails into images/birds/thumbs/ dynamically behind the scenes.
