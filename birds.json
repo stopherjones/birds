@@ -2,7 +2,7 @@
   {
     "name": "Aquatic Warbler",
     "code": "aquatic_warbler",
-    "type": "warbler",
+    "type": "songbirds",
     "habitat": "wetland",
     "migratory": "UK passage",
     "rarity": "scarce - less than 1,000",
@@ -13,7 +13,7 @@
   {
     "name": "Arctic Skua",
     "code": "arctic_skua",
-    "type": "seabird",
+    "type": "seabirds",
     "habitat": "coastal",
     "migratory": "UK passage",
     "rarity": "uncommon - 1,000 to 10,000",
@@ -24,7 +24,7 @@
   {
     "name": "Arctic Tern",
     "code": "arctic_tern",
-    "type": "seabird",
+    "type": "seabirds",
     "habitat": "coastal",
     "migratory": "UK passage",
     "rarity": "common - 10,000 to 100,000",
@@ -35,7 +35,7 @@
   {
     "name": "Avocet",
     "code": "avocet",
-    "type": "wader",
+    "type": "Water birds and waders",
     "habitat": "wetland",
     "migratory": "resident",
     "rarity": "common - 10,000 to 100,000",
@@ -46,7 +46,7 @@
   {
     "name": "Balearic Shearwater",
     "code": "balearic_shearwater",
-    "type": "seabird",
+    "type": "seabirds",
     "habitat": "coastal",
     "migratory": "UK passage",
     "rarity": "uncommon - 1,000 to 10,000",
@@ -57,7 +57,7 @@
   {
     "name": "Bar-tailed Godwit",
     "code": "bar-tailed_godwit",
-    "type": "wader",
+    "type": "Water birds and waders",
     "habitat": "wetland",
     "migratory": "Winter visitor",
     "rarity": "common - 10,000 to 100,000",
@@ -68,7 +68,7 @@
   {
     "name": "Barn Owl",
     "code": "barn_owl",
-    "type": "owl",
+    "type": "Raptors and owls",
     "habitat": "woodland",
     "migratory": "resident",
     "rarity": "uncommon - 1,000 to 10,000",
@@ -79,7 +79,7 @@
   {
     "name": "Barnacle Goose",
     "code": "barnacle_goose",
-    "type": "waterfowl",
+    "type": "Water birds and waders",
     "habitat": "coastal",
     "migratory": "Winter visitor",
     "rarity": "uncommon - 1,000 to 10,000",
@@ -90,7 +90,7 @@
   {
     "name": "Bearded Tit",
     "code": "bearded_tit",
-    "type": "tits_and_finches",
+    "type": "songbirds",
     "habitat": "wetland",
     "migratory": "resident",
     "rarity": "scarce - less than 1,000",
@@ -101,7 +101,7 @@
   {
     "name": "Bewick's Swan",
     "code": "bewick's_swan",
-    "type": "waterfowl",
+    "type": "Water birds and waders",
     "habitat": "wetland",
     "migratory": "Winter visitor",
     "rarity": "uncommon - 1,000 to 10,000",
@@ -112,7 +112,7 @@
   {
     "name": "Bittern",
     "code": "bittern",
-    "type": "wader",
+    "type": "Water birds and waders",
     "habitat": "wetland",
     "migratory": "resident",
     "rarity": "scarce - less than 1,000",
@@ -123,10 +123,32 @@
   {
     "name": "Black Grouse",
     "code": "black_grouse",
-    "type": "grouse",
+    "type": "Game and ground birds",
     "habitat": "upland",
     "migratory": "resident",
     "rarity": "uncommon - 1,000 to 10,000",
+    "seen": false,
+    "where_seen": "",
+    "photos": []
+  },
+  {
+    "name": "Black Guillemot",
+    "code": "black_guillemot",
+    "type": "seabirds",
+    "habitat": "coastal",
+    "migratory": "resident",
+    "rarity": "common - 10,000 to 100,000",
+    "seen": false,
+    "where_seen": "",
+    "photos": []
+  },
+  {
+    "name": "",
+    "code": "",
+    "type": "",
+    "habitat": "",
+    "migratory": "",
+    "rarity": "",
     "seen": false,
     "where_seen": "",
     "photos": []
