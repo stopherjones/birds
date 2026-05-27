@@ -180,5 +180,5 @@ function updateSightingStatistics() {
     if (!DOM.statText) return;
     const totalCount = allBirds.length;
     const seenCount = allBirds.filter(bird => bird.seen === true).length;
-    DOM.statText.textContent = `${seenCount} species seen out of ${totalCount} total tracked species`;
+    DOM.statText.innerHTML = `${seenCount} species from the ${totalCount} <a href="https://www.rspb.org.uk/birds-and-wildlife/a-z" target="_blank" rel="noopener noreferrer">RSPB A-Z list of UK Birds</a>`;
 }
