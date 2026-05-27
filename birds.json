@@ -122,8 +122,8 @@
   {
     "name": "Black-headed Gull",
     "code": "black_headed_gull",
-    "seen": false,
-    "where_seen": "",
+    "seen": true,
+    "where_seen": "RSPB St Aidan's, West Yorkshire",
     "photos": [],
     "url": "https://www.rspb.org.uk/birds-and-wildlife/black-headed-gull"
   },
@@ -218,8 +218,8 @@
   {
     "name": "Canada Goose",
     "code": "canada_goose",
-    "seen": false,
-    "where_seen": "",
+    "seen": true,
+    "where_seen": "RSPB St Aidan's, West Yorkshire",
     "photos": [],
     "url": "https://www.rspb.org.uk/birds-and-wildlife/canada-goose"
   },
@@ -338,16 +338,16 @@
   {
     "name": "Common Tern",
     "code": "common_tern",
-    "seen": false,
-    "where_seen": "",
+    "seen": true,
+    "where_seen": "RSPB St Aidan's, West Yorkshire",
     "photos": [],
     "url": "https://www.rspb.org.uk/birds-and-wildlife/common-tern"
   },
   {
     "name": "Cormorant",
     "code": "cormorant",
-    "seen": false,
-    "where_seen": "",
+    "seen": true,
+    "where_seen": "RSPB St Aidan's, West Yorkshire",
     "photos": [],
     "url": "https://www.rspb.org.uk/birds-and-wildlife/cormorant"
   },
@@ -650,8 +650,8 @@
   {
     "name": "Great Crested Grebe",
     "code": "great_crested_grebe",
-    "seen": false,
-    "where_seen": "",
+    "seen": true,
+    "where_seen": "RSPB St Aidan's, West Yorkshire",
     "photos": [],
     "url": "https://www.rspb.org.uk/birds-and-wildlife/great-crested-grebe"
   },
@@ -914,8 +914,8 @@
   {
     "name": "Kestrel",
     "code": "kestrel",
-    "seen": false,
-    "where_seen": "",
+    "seen": true,
+    "where_seen": "RSPB St Aidan's, West Yorkshire",
     "photos": [],
     "url": "https://www.rspb.org.uk/birds-and-wildlife/kestrel"
   },
@@ -1098,16 +1098,16 @@
   {
     "name": "Magpie",
     "code": "magpie",
-    "seen": false,
-    "where_seen": "",
+    "seen": true,
+    "where_seen": "RSPB St Aidan's, West Yorkshire",
     "photos": [],
     "url": "https://www.rspb.org.uk/birds-and-wildlife/magpie"
   },
   {
     "name": "Mallard",
     "code": "mallard",
-    "seen": false,
-    "where_seen": "",
+    "seen": true,
+    "where_seen": "RSPB St Aidan's, West Yorkshire",
     "photos": [],
     "url": "https://www.rspb.org.uk/birds-and-wildlife/mallard"
   },
@@ -1474,8 +1474,8 @@
   {
     "name": "Reed Bunting",
     "code": "reed_bunting",
-    "seen": false,
-    "where_seen": "",
+    "seen": true,
+    "where_seen": "Pocklington Canal",
     "photos": [],
     "url": "https://www.rspb.org.uk/birds-and-wildlife/reed-bunting"
   },
@@ -1626,8 +1626,8 @@
   {
     "name": "Sedge Warbler",
     "code": "sedge_warbler",
-    "seen": false,
-    "where_seen": "",
+    "seen": true,
+    "where_seen": "Pocklington Canal",
     "photos": [],
     "url": "https://www.rspb.org.uk/birds-and-wildlife/sedge-warbler"
   },
@@ -1674,8 +1674,8 @@
   {
     "name": "Shoveler",
     "code": "shoveler",
-    "seen": false,
-    "where_seen": "",
+    "seen": true,
+    "where_seen": "RSPB St Aidan's, West Yorkshire",
     "photos": [],
     "url": "https://www.rspb.org.uk/birds-and-wildlife/shoveler"
   },
@@ -1802,8 +1802,8 @@
   {
     "name": "Stock Dove",
     "code": "stock_dove",
-    "seen": false,
-    "where_seen": "",
+    "seen": true,
+    "where_seen": "RSPB St Aidan's, West Yorkshire",
     "photos": [],
     "url": "https://www.rspb.org.uk/birds-and-wildlife/stock-dove"
   },
@@ -1906,8 +1906,8 @@
   {
     "name": "Tufted Duck",
     "code": "tufted_duck",
-    "seen": false,
-    "where_seen": "",
+    "seen": true,
+    "where_seen": "RSPB St Aidan's, West Yorkshire",
     "photos": [],
     "url": "https://www.rspb.org.uk/birds-and-wildlife/tufted-duck"
   },
