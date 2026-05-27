@@ -125,7 +125,6 @@ function renderGalleryGrid() {
 }
 
 function createBirdDetailPopup(bird) {
-    // Standard workspace canvas garbage cleanups
     let overlay = document.querySelector('.popup-overlay');
     if (overlay) overlay.remove();
 
@@ -136,41 +135,39 @@ function createBirdDetailPopup(bird) {
     popupBox.className = 'popup-box';
 
     const largeImageSrc = bird.seen ? `${CONFIG.localImgDir}${bird.code}.jpg` : CONFIG.placeholderImg;
-    
-    // Safely match the newly scraped URL property fallback to standard anchor if blank
-    const destinationUrl = bird.url || '#';
+    const targetUrl = bird.url || '#';
 
     popupBox.innerHTML = `
+        <button class="close-btn" aria-label="Close popup">&times;</button>
         <h2>
-            <a href="${destinationUrl}" target="_blank" rel="noopener noreferrer" class="popup-title-link" title="View details on RSPB Official Site">
+            <a href="${targetUrl}" target="_blank" rel="noopener noreferrer" class="popup-title-link">
                 ${bird.name}
             </a>
         </h2>
         
-        <div class="popup-image-container" style="text-align: center; margin-bottom: 1rem; background: #ebebeb; border-radius: 4px; overflow: hidden; max-height: 340px;">
-            <img src="${largeImageSrc}" alt="${bird.name}" style="width: 100%; height: auto; max-height: 340px; object-fit: cover; display: block; margin: 0 auto; ${!bird.seen ? 'filter: grayscale(1) opacity(0.35); padding: 1.5rem; box-sizing: border-box; max-height: 180px; width: auto;' : ''}">
+        <div class="popup-image-container">
+            <img src="${largeImageSrc}" alt="${bird.name}" class="${!bird.seen ? 'greyed-out' : ''}">
         </div>
 
-        <div class="popup-scroll-area" style="max-height: 40vh; overflow-y: auto; padding: 0 0.2rem;">
-            <table style="width: 100%; border-collapse: collapse; margin-bottom: 0.5rem; font-size: 0.95rem;">
-                <tr style="border-bottom: 1px solid #eee;">
-                    <td style="padding: 0.5rem 0; color: #666; font-weight: 500;">Location Seen:</td>
-                    <td style="padding: 0.5rem 0; font-weight: 600; color: ${bird.seen ? '#111' : '#aaa'};">
+        <div class="popup-scroll-area">
+            <table>
+                <tr>
+                    <td class="info-label">Location Seen:</td>
+                    <td class="info-value" style="color: ${bird.seen ? '#111' : '#aaa'};">
                         ${bird.seen ? (bird.where_seen || 'Not recorded') : '-'}
                     </td>
                 </tr>
             </table>
         </div>
-
-        <div style="text-align: center; margin-top: 1rem;">
-            <button class="close-btn" style="width: 100%; box-sizing: border-box; cursor: pointer; border: none; padding: 0.6rem 1rem;">Close</button>
-        </div>
     `;
 
     overlay.appendChild(popupBox);
     document.body.appendChild(overlay);
+
+    // Subtle trigger animation delay
     setTimeout(() => overlay.classList.add('active'), 10);
 
+    // Event listener handles clicking outside the box OR clicking the new "X" button
     overlay.addEventListener('click', (e) => {
         if (e.target === overlay || e.target.classList.contains('close-btn')) {
             overlay.classList.remove('active');
