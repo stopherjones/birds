@@ -424,14 +424,6 @@
     "url": "https://www.rspb.org.uk/birds-and-wildlife/dartford-warbler"
   },
   {
-    "name": "Declines, disease and dangers – the issues facing birds",
-    "code": "declines_disease_and_dangers_the_issues_facing_birds",
-    "seen": false,
-    "where_seen": "",
-    "photos": [],
-    "url": "https://www.rspb.org.uk/birds-and-wildlife/issues-facing-birds"
-  },
-  {
     "name": "Dipper",
     "code": "dipper",
     "seen": false,
@@ -486,14 +478,6 @@
     "where_seen": "",
     "photos": [],
     "url": "https://www.rspb.org.uk/birds-and-wildlife/eurasian-coot"
-  },
-  {
-    "name": "Feeding birds near you",
-    "code": "feeding_birds_near_you",
-    "seen": false,
-    "where_seen": "",
-    "photos": [],
-    "url": "https://www.rspb.org.uk/birds-and-wildlife/feeding-birds-near-you"
   },
   {
     "name": "Fieldfare",
@@ -870,14 +854,6 @@
     "where_seen": "Isles of Scilly",
     "photos": [],
     "url": "https://www.rspb.org.uk/birds-and-wildlife/house-sparrow"
-  },
-  {
-    "name": "How to report crimes against wild birds",
-    "code": "how_to_report_crimes_against_wild_birds",
-    "seen": false,
-    "where_seen": "",
-    "photos": [],
-    "url": "https://www.rspb.org.uk/birds-and-wildlife/how-to-report-crimes-against-wild-birds"
   },
   {
     "name": "Iceland Gull",
@@ -2022,14 +1998,6 @@
     "where_seen": "",
     "photos": [],
     "url": "https://www.rspb.org.uk/birds-and-wildlife/whitethroat"
-  },
-  {
-    "name": "Who should I call if I am concerned about a bird?",
-    "code": "who_should_i_call_if_i_am_concerned_about_a_bird",
-    "seen": false,
-    "where_seen": "",
-    "photos": [],
-    "url": "https://www.rspb.org.uk/birds-and-wildlife/if-you-find-an-injured-bird"
   },
   {
     "name": "Whooper Swan",
