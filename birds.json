@@ -26,8 +26,8 @@
   {
     "name": "Avocet",
     "code": "avocet",
-    "seen": false,
-    "where_seen": "",
+    "seen": true,
+    "where_seen": "Norfolk Broads",
     "photos": [],
     "url": "https://www.rspb.org.uk/birds-and-wildlife/avocet"
   },
@@ -466,8 +466,8 @@
   {
     "name": "Egyptian Goose",
     "code": "egyptian_goose",
-    "seen": false,
-    "where_seen": "",
+    "seen": true,
+    "where_seen": "Norfolk Broads",
     "photos": [],
     "url": "https://www.rspb.org.uk/birds-and-wildlife/egyptian-goose"
   },
@@ -954,8 +954,8 @@
   {
     "name": "Lapwing",
     "code": "lapwing",
-    "seen": false,
-    "where_seen": "",
+    "seen": true,
+    "where_seen": "Norfolk Broads",
     "photos": [],
     "url": "https://www.rspb.org.uk/birds-and-wildlife/lapwing"
   },
@@ -1570,8 +1570,8 @@
   {
     "name": "Ruff",
     "code": "ruff",
-    "seen": false,
-    "where_seen": "",
+    "seen": true,
+    "where_seen": "Norfolk Broads",
     "photos": [],
     "url": "https://www.rspb.org.uk/birds-and-wildlife/ruff"
   },
