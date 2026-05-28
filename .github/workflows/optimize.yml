@@ -4,11 +4,11 @@ on:
   push:
     paths:
       - 'images/birds/**'
-      - 'birds.json' # Now it will also trigger if you update your JSON database!
-  workflow_dispatch: # <--- THIS adds your manual "Run workflow" button!
+      - [cite_start]'birds.json' [cite: 1]
+  [cite_start]workflow_dispatch: [cite: 2]
 
 permissions:
-  contents: write
+  [cite_start]contents: write [cite: 3]
 
 jobs:
   optimize:
@@ -24,7 +24,84 @@ jobs:
           python-version: '3.x'
 
       - name: Install Image Processor
-        run: pip install Pillow
+        [cite_start]run: pip install Pillow [cite: 4]
+
+      - name: Process Database and Assets
+        run: |
+          python - <<EOF
+          import json
+          import os
+
+          json_path = 'birds.json'
+          bird_dir = 'images/birds'
+          thumb_dir = os.path.join(bird_dir, 'thumbs')
+
+          if os.path.exists(json_path):
+              with open(json_path, 'r') as f:
+                  data = json.load(f)
+          else:
+              print("Critical Error: birds.json data structure not found!")
+              exit(1)
+
+          birds_list = data if isinstance(data, list) else data.get('birds', [])
+          json_updated = False
+
+          for filename in os.listdir(bird_dir):
+              if os.path.isdir(os.path.join(bird_dir, filename)) or not filename.lower().endswith(('.jpg', '.jpeg', '.png')):
+                  continue
+                  
+              raw_name, ext = os.path.splitext(filename)
+              
+              # 1. SPECIAL MODE: Suffix flag is present (e.g., bird_code__Location.jpg or bird_code__.jpg)
+              if '__' in raw_name:
+                  parts = raw_name.split('__', 1)
+                  bird_code = parts[0].strip()
+                  provided_location = parts[1].strip()
+
+                  bird = next((b for b in birds_list if b.get('code') == bird_code), None)
+                  if bird:
+                      final_filename = f"{bird_code}{ext.lower()}"
+                      dest_image_path = os.path.join(bird_dir, final_filename)
+                      dest_thumb_path = os.path.join(thumb_dir, final_filename)
+
+                      # Delete old files to force Step 2 to generate fresh, compressed copies
+                      if os.path.exists(dest_image_path): os.remove(dest_image_path)
+                      if os.path.exists(dest_thumb_path): os.remove(dest_thumb_path)
+
+                      bird['seen'] = True
+                      
+                      # Update text data conditionally
+                      if provided_location:
+                          bird['where_seen'] = provided_location
+                          print(f"Mode A: Updated {bird_code} with fresh location: {provided_location}")
+                      else:
+                          print(f"Mode B: Swapped photo for {bird_code} (retained location: {bird.get('where_seen', '')})")
+
+                      os.rename(os.path.join(bird_dir, filename), dest_image_path)
+                      json_updated = True
+
+              # 2. DIRECT MODE: Clean filename dropped directly (e.g., bird_code.jpg)
+              else:
+                  bird_code = raw_name.strip()
+                  bird = next((b for b in birds_list if b.get('code') == bird_code), None)
+                  
+                  # Automatically process if it's a brand new species sighting
+                  if bird and not bird.get('seen'):
+                      dest_thumb_path = os.path.join(thumb_dir, f"{bird_code}{ext.lower()}")
+                      
+                      # Clear placeholder silhouettes if they exist
+                      if os.path.exists(dest_thumb_path): os.remove(dest_thumb_path)
+                      
+                      bird['seen'] = True
+                      bird['where_seen'] = "Location not recorded"
+                      json_updated = True
+                      print(f"Mode C: Direct upload activated new species {bird_code} with default location.")
+
+          if json_updated:
+              with open(json_path, 'w') as f:
+                  json.dump(data, f, indent=4)
+              print("Database records synchronized successfully.")
+          EOF
 
       - name: Compress Masters and Generate Thumbnails
         run: |
@@ -34,28 +111,29 @@ jobs:
 
           bird_dir = "images/birds"
           thumb_dir = os.path.join(bird_dir, "thumbs")
-          os.makedirs(thumb_dir, exist_ok=True)
+          [cite_start]os.makedirs(thumb_dir, exist_ok=True) [cite: 5]
 
           for filename in os.listdir(bird_dir):
               if os.path.isdir(os.path.join(bird_dir, filename)):
-                  continue
+                  [cite_start]continue [cite: 6]
                   
               if filename.lower().endswith(('.jpg', '.jpeg', '.png')):
                   img_path = os.path.join(bird_dir, filename)
-                  thumb_path = os.path.join(thumb_dir, filename)
+                  [cite_start]thumb_path = os.path.join(thumb_dir, filename) [cite: 7]
                   
                   with Image.open(img_path) as img:
                       if os.path.getsize(img_path) > 200000:
                           img.save(img_path, "JPEG", quality=80, optimize=True)
-                          print(f"Optimized master: {filename}")
+                          [cite_start]print(f"Optimized master: {filename}") [cite: 8]
                       
+                      # Re-checks ensure that if step 1 deleted an old thumb, a fresh optimized one is generated right here
                       if not os.path.exists(thumb_path):
                           img.thumbnail((400, 400))
                           img.save(thumb_path, "JPEG", quality=75, optimize=True)
-                          print(f"Generated thumbnail for: {filename}")
+                          [cite_start]print(f"Generated thumbnail for: {filename}") 
           EOF
 
       - name: Commit Optimized Images Automatically
         uses: stefanzweifel/git-auto-commit-action@v5
         with:
-          commit_message: "Automated image optimization and thumbnail generation [skip ci]"
+          commit_message: "Automated image processing, asset purge, and database sync [skip ci]"
