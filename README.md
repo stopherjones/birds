@@ -5,7 +5,7 @@ Inspired by nostalgic memories of filling in sticker books, the project features
 
 ## 🚀 Features
  * **Dynamic Tracking Statistics:** Real-time counter displaying how many species have been logged from the list.
- * **Interactive Gallery:** Clicking any bird opens a modal showing larger resolution photo and where seen.
+ * **Interactive Gallery:** Clicking any bird opens a modal showing larger resolution photo, location seen and link to the bird's page on the RSPB website.
  * **Mobile Optimized Layout:** The controls adapt smoothly from desktop rows to single-column phone grids for easy use in the field.
 ## 📂 Project Architecture
 ```text
@@ -21,3 +21,7 @@ Inspired by nostalgic memories of filling in sticker books, the project features
 
 ## ⚙️ Automated Photo Workflow & Mobile Workaround
 The project utilizes an automated **GitHub Actions** helper workflow to handle high-resolution image compression and generate grid thumbnails into images/birds/thumbs/ dynamically behind the scenes.
+Photos should be named as follows:
+
+bird_name.jpg (github action will automatically add a small thumbnail to the gallery)
+bird_name__Description of location seen.jpg (github action will automatically update the location in the json and add a small thumbnail to the gallery)
