@@ -24,6 +24,28 @@ body {
     font-size: 0.95rem;
 }
 
+.top-link {
+    color: #0066cc;
+    text-decoration: none;
+    font-size: 0.95rem;
+    white-space: nowrap;
+}
+
+.top-link:hover {
+    text-decoration: underline;
+}
+
+.top-links {
+    position: absolute;
+    top: 1.5rem;
+    right: 1.5rem;
+    display: flex;
+    flex-direction: column;
+    gap: 0.3rem;
+    align-items: flex-end;
+    z-index: 100;
+}
+
 /* Exact replica of your original unboxed styling rule */
 .main-title + .stat-display,
 .stat-display {
