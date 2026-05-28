@@ -389,3 +389,43 @@ body {
         height: 95px;
     }
 }
+
+/* ==========================================================================
+   6. INTERACTIVE LIGHTBOX CAROUSEL CONTROLS
+   ========================================================================== */
+.nav-btn {
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    background: rgba(0, 0, 0, 0.25);
+    color: rgba(255, 255, 255, 0.85);
+    border: none;
+    font-size: 2.75rem;
+    font-weight: 300;
+    padding: 1.5rem 0.85rem;
+    cursor: pointer;
+    border-radius: 6px;
+    z-index: 1020;
+    user-select: none;
+    transition: background-color 0.2s ease, color 0.2s ease;
+}
+
+.nav-btn:hover {
+    background: rgba(0, 0, 0, 0.65);
+    color: #ffffff;
+}
+
+.prev-btn {
+    left: 1.5vw;
+}
+
+.next-btn {
+    right: 1.5vw;
+}
+
+/* Hide floating desktop arrow click buttons entirely on tiny touch screens */
+@media (max-width: 768px) {
+    .nav-btn {
+        display: none !important;
+    }
+}

@@ -1,6 +1,7 @@
 /**
- * Birding Life List Engine - Basic Edition
- * Handles text search, seen status filtering, and fixed alphabetical sorting.
+ * Birding Life Life List Engine - Navigation Edition
+ * Handles text search, seen status filtering, alphabetical sorting,
+ * and swipe/arrow navigation between seen popups.
  */
 
 const CONFIG = {
@@ -10,6 +11,12 @@ const CONFIG = {
 };
 let allBirds = [];
 let filteredBirds = [];
+let currentNavigationList = []; // Tracks the ordered list for swiping/arrow routing
+let currentActiveIndex = -1;
+
+// Touch tracking vectors for mobile swiping
+let touchStartX = 0;
+let touchEndX = 0;
 
 const DOM = {
     statText: document.getElementById('statText'),
@@ -21,6 +28,7 @@ const DOM = {
 
 document.addEventListener('DOMContentLoaded', () => {
     initApp();
+    setupGlobalInputListeners();
 });
 
 function initApp() {
@@ -58,10 +66,7 @@ function applyFiltersAndRender() {
     const showUnseen = DOM.filterUnseen ? DOM.filterUnseen.checked : true;
 
     filteredBirds = allBirds.filter(bird => {
-        // 1. Text Search Input Parsing (Matches against species name only)
         const matchesSearch = !searchQuery || bird.name.toLowerCase().includes(searchQuery);
-
-        // 2. Sighting Checkbox Filter Status Parsing
         let matchesStatus = false;
         if (bird.seen && showSeen) matchesStatus = true;
         if (!bird.seen && showUnseen) matchesStatus = true;
@@ -82,8 +87,11 @@ function renderGalleryGrid() {
         return;
     }
 
-    // Default Fixed Behavior: Always Sorted Alphabetically A-Z
+    // Capture the exact presentation list currently sorted on screen
     const displayList = [...filteredBirds].sort((a, b) => a.name.localeCompare(b.name));
+    
+    // Filter down to only SEEN birds for navigation, ensuring swiping skips empty silhouettes
+    currentNavigationList = displayList.filter(bird => bird.seen === true);
 
     const gridContainer = document.createElement('div');
     gridContainer.className = 'gallery-grid';
@@ -117,14 +125,28 @@ function renderGalleryGrid() {
         item.appendChild(wrapper);
         item.appendChild(caption);
 
-        item.addEventListener('click', () => createBirdDetailPopup(bird));
+        item.addEventListener('click', () => {
+            if (bird.seen) {
+                // Open interactive slide view at this item's relative index position
+                const targetIdx = currentNavigationList.findIndex(b => b.code === bird.code);
+                createBirdDetailPopup(targetIdx);
+            } else {
+                // If it's unseen, show the static standalone popup profile
+                createStaticUnseenPopup(bird);
+            }
+        });
         gridContainer.appendChild(item);
     });
 
     DOM.gallery.appendChild(gridContainer);
 }
 
-function createBirdDetailPopup(bird) {
+// Generates the slider popup container for observed sightings
+function createBirdDetailPopup(navIndex) {
+    if (navIndex < 0 || navIndex >= currentNavigationList.length) return;
+    currentActiveIndex = navIndex;
+    const bird = currentNavigationList[currentActiveIndex];
+
     let overlay = document.querySelector('.popup-overlay');
     if (overlay) overlay.remove();
 
@@ -134,7 +156,7 @@ function createBirdDetailPopup(bird) {
     const popupBox = document.createElement('div');
     popupBox.className = 'popup-box';
 
-    const largeImageSrc = bird.seen ? `${CONFIG.localImgDir}${bird.code}.jpg` : CONFIG.placeholderImg;
+    const largeImageSrc = `${CONFIG.localImgDir}${bird.code}.jpg`;
     const targetUrl = bird.url || '#';
 
     popupBox.innerHTML = `
@@ -146,32 +168,146 @@ function createBirdDetailPopup(bird) {
         </h2>
         
         <div class="popup-image-container">
-            <img src="${largeImageSrc}" alt="${bird.name}" class="${!bird.seen ? 'greyed-out' : ''}">
+            <img src="${largeImageSrc}" alt="${bird.name}">
         </div>
 
         <div class="popup-scroll-area">
             <table>
                 <tr>
                     <td class="info-label">Location Seen:</td>
-                    <td class="info-value" style="color: ${bird.seen ? '#111' : '#aaa'};">
-                        ${bird.seen ? (bird.where_seen || 'Not recorded') : '-'}
+                    <td class="info-value" style="color: #111;">
+                        ${bird.where_seen || 'Not recorded'}
                     </td>
                 </tr>
             </table>
         </div>
     `;
 
+    // Append Desktop Arrow overlays ONLY if multiple birds are visible to navigate through
+    if (currentNavigationList.length > 1) {
+        const prevBtn = document.createElement('button');
+        prevBtn.className = 'nav-btn prev-btn';
+        prevBtn.innerHTML = '&#10094;';
+        prevBtn.setAttribute('aria-label', 'Previous photo');
+        prevBtn.addEventListener('click', (e) => { e.stopPropagation(); changeSlide(-1); });
+
+        const nextBtn = document.createElement('button');
+        nextBtn.className = 'nav-btn next-btn';
+        nextBtn.innerHTML = '&#10095;';
+        nextBtn.setAttribute('aria-label', 'Next photo');
+        nextBtn.addEventListener('click', (e) => { e.stopPropagation(); changeSlide(1); });
+
+        overlay.appendChild(prevBtn);
+        overlay.appendChild(nextBtn);
+    }
+
     overlay.appendChild(popupBox);
     document.body.appendChild(overlay);
 
-    // Subtle trigger animation delay
     setTimeout(() => overlay.classList.add('active'), 10);
 
-    // Event listener handles clicking outside the box OR clicking the new "X" button
+    // Setup Gesture Trackers
+    overlay.addEventListener('touchstart', e => { touchStartX = e.changedTouches[0].screenX; }, { passive: true });
+    overlay.addEventListener('touchend', e => { 
+        touchEndX = e.changedTouches[0].screenX; 
+        handleSwipeGesture(); 
+    }, { passive: true });
+
     overlay.addEventListener('click', (e) => {
         if (e.target === overlay || e.target.classList.contains('close-btn')) {
-            overlay.classList.remove('active');
-            setTimeout(() => overlay.remove(), 200);
+            closeActivePopup();
+        }
+    });
+}
+
+// Fallback logic explicitly for displaying Unseen placeholders (no navigation attached)
+function createStaticUnseenPopup(bird) {
+    let overlay = document.querySelector('.popup-overlay');
+    if (overlay) overlay.remove();
+    currentActiveIndex = -1; // Detaches navigation index tracking
+
+    overlay = document.createElement('div');
+    overlay.className = 'popup-overlay';
+    
+    const popupBox = document.createElement('div');
+    popupBox.className = 'popup-box';
+
+    popupBox.innerHTML = `
+        <button class="close-btn" aria-label="Close popup">&times;</button>
+        <h2>
+            <a href="${bird.url || '#'}" target="_blank" rel="noopener noreferrer" class="popup-title-link">
+                ${bird.name}
+            </a>
+        </h2>
+        <div class="popup-image-container">
+            <img src="${CONFIG.placeholderImg}" alt="${bird.name}" class="greyed-out">
+        </div>
+        <div class="popup-scroll-area">
+            <table>
+                <tr>
+                    <td class="info-label">Location Seen:</td>
+                    <td class="info-value" style="color: #aaa;">-</td>
+                </tr>
+            </table>
+        </div>
+    `;
+    overlay.appendChild(popupBox);
+    document.body.appendChild(overlay);
+    setTimeout(() => overlay.classList.add('active'), 10);
+    overlay.addEventListener('click', (e) => {
+        if (e.target === overlay || e.target.classList.contains('close-btn')) {
+            closeActivePopup();
+        }
+    });
+}
+
+function changeSlide(direction) {
+    if (currentActiveIndex === -1 || currentNavigationList.length <= 1) return;
+    
+    currentActiveIndex += direction;
+    if (currentActiveIndex >= currentNavigationList.length) currentActiveIndex = 0;
+    if (currentActiveIndex < 0) currentActiveIndex = currentNavigationList.length - 1;
+
+    // Fluidly updates the popup UI content inline without tearing down container
+    const bird = currentNavigationList[currentActiveIndex];
+    const imgEl = document.querySelector('.popup-image-container img');
+    const linkEl = document.querySelector('.popup-title-link');
+    const locEl = document.querySelector('.info-value');
+
+    if (imgEl && linkEl && locEl) {
+        linkEl.href = bird.url || '#';
+        linkEl.textContent = bird.name;
+        imgEl.src = `${CONFIG.localImgDir}${bird.code}.jpg`;
+        imgEl.alt = bird.name;
+        locEl.textContent = bird.where_seen || 'Not recorded';
+    }
+}
+
+function handleSwipeGesture() {
+    if (currentActiveIndex === -1) return;
+    const threshold = 50; 
+    if (touchEndX < touchStartX - threshold) changeSlide(1);  // Swipe Left -> Next
+    if (touchEndX > touchStartX + threshold) changeSlide(-1); // Swipe Right -> Prev
+}
+
+function closeActivePopup() {
+    const overlay = document.querySelector('.popup-overlay');
+    if (overlay) {
+        overlay.classList.remove('active');
+        setTimeout(() => { overlay.remove(); currentActiveIndex = -1; }, 200);
+    }
+}
+
+function setupGlobalInputListeners() {
+    // Listens for structural desktop key actions globally
+    document.addEventListener('keydown', (e) => {
+        const overlay = document.querySelector('.popup-overlay.active');
+        if (!overlay) return;
+
+        if (e.key === 'Escape') closeActivePopup();
+        if (currentActiveIndex !== -1) {
+            if (e.key === 'ArrowRight' || e.key === 'd' || e.key === 'D') changeSlide(1);
+            if (e.key === 'ArrowLeft' || e.key === 'a' || e.key === 'A') changeSlide(-1);
         }
     });
 }
