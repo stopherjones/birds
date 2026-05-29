@@ -738,8 +738,8 @@
     {
         "name": "Grey Partridge",
         "code": "grey_partridge",
-        "seen": false,
-        "where_seen": "",
+        "seen": true,
+        "where_seen": "Pocklington Canal",
         "photos": [],
         "url": "https://www.rspb.org.uk/birds-and-wildlife/grey-partridge"
     },
