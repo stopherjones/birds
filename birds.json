@@ -170,8 +170,8 @@
     {
         "name": "Blue Tit",
         "code": "blue_tit",
-        "seen": false,
-        "where_seen": "",
+        "seen": true,
+        "where_seen": "Bielby, East Yorkshire",
         "photos": [],
         "url": "https://www.rspb.org.uk/birds-and-wildlife/blue-tit"
     },
@@ -714,8 +714,8 @@
     {
         "name": "Greenfinch",
         "code": "greenfinch",
-        "seen": false,
-        "where_seen": "",
+        "seen": true,
+        "where_seen": "Bielby, East Yorkshire",
         "photos": [],
         "url": "https://www.rspb.org.uk/birds-and-wildlife/greenfinch"
     },
@@ -1170,8 +1170,8 @@
     {
         "name": "Moorhen",
         "code": "moorhen",
-        "seen": false,
-        "where_seen": "",
+        "seen": true,
+        "where_seen": "Pocklington Canal",
         "photos": [],
         "url": "https://www.rspb.org.uk/birds-and-wildlife/moorhen"
     },
@@ -2026,8 +2026,8 @@
     {
         "name": "Willow Warbler",
         "code": "willow_warbler",
-        "seen": false,
-        "where_seen": "",
+        "seen": true,
+        "where_seen": "Pocklington Canal",
         "photos": [],
         "url": "https://www.rspb.org.uk/birds-and-wildlife/willow-warbler"
     },
