@@ -354,8 +354,8 @@
     {
         "name": "Corn Bunting",
         "code": "corn_bunting",
-        "seen": false,
-        "where_seen": "",
+        "seen": true,
+        "where_seen": "Seaton Ross, East Yorkshire",
         "photos": [],
         "url": "https://www.rspb.org.uk/birds-and-wildlife/corn-bunting"
     },
@@ -403,7 +403,7 @@
         "name": "Curlew",
         "code": "curlew",
         "seen": true,
-        "where_seen": "Bubwith Ings, East Yorkshire",
+        "where_seen": "Pocklington Canal, East Yorkshire",
         "photos": [],
         "url": "https://www.rspb.org.uk/birds-and-wildlife/curlew"
     },
@@ -675,7 +675,7 @@
         "name": "Great Spotted Woodpecker",
         "code": "great_spotted_woodpecker",
         "seen": true,
-        "where_seen": "Sutton Upon Derwent, East Yorkshire",
+        "where_seen": "Bielby, East Yorkshire",
         "photos": [],
         "url": "https://www.rspb.org.uk/birds-and-wildlife/great-spotted-woodpecker"
     },
@@ -2090,8 +2090,8 @@
     {
         "name": "Yellow Wagtail",
         "code": "yellow_wagtail",
-        "seen": false,
-        "where_seen": "",
+        "seen": true,
+        "where_seen": "Location not recorded",
         "photos": [],
         "url": "https://www.rspb.org.uk/birds-and-wildlife/yellow-wagtail"
     },
