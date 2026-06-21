@@ -167,9 +167,9 @@ function createBirdDetailPopup(navIndex) {
             </a>
         </h2>
         
-        <div class="popup-image-container">
-            <img src="${largeImageSrc}" alt="${bird.name}">
-        </div>
+        <div class="popup-image-container" style="text-align: center; margin-bottom: 1rem; background: #ebebeb; border-radius: 4px; overflow: hidden; max-height: 340px; min-height: 200px; display: flex; align-items: center; justify-content: center;">
+    <img src="${largeImageSrc}" alt="${bird.name}" onload="this.style.opacity=1" style="width: 100%; height: auto; max-height: 340px; object-fit: cover; display: block; margin: 0 auto; opacity: 0; transition: opacity 0.2s ease; ${!bird.seen ? 'filter: grayscale(1) opacity(0.35); padding: 1.5rem; box-sizing: border-box; max-height: 180px; width: auto; opacity: 1;' : ''}">
+</div>
 
         <div class="popup-scroll-area">
             <table>
@@ -180,7 +180,7 @@ function createBirdDetailPopup(navIndex) {
                     </td>
                 </tr>
             </table>
-        </div>
+        </div>9
     `;
 
     // Append Desktop Arrow overlays ONLY if multiple birds are visible to navigate through
