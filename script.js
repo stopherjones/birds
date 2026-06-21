@@ -139,15 +139,35 @@ function createBirdDetailPopup(bird) {
 
     const largeImageSrc = bird.seen ? `${CONFIG.localImgDir}${bird.code}.jpg` : CONFIG.placeholderImg;
 
-    // Matches layout from 1782038132051.jpeg: Title on left, absolute/flexed close "X" on right.
+    // Injecting a CSS keyframe rule dynamically if it doesn't exist yet for the spinner animation
+    if (!document.getElementById('spinner-styles')) {
+        const style = document.createElement('style');
+        style.id = 'spinner-styles';
+        style.textContent = `
+            @keyframes popup-spin {
+                0% { transform: rotate(0deg); }
+                100% { transform: rotate(360deg); }
+            }
+        `;
+        document.head.appendChild(style);
+    }
+
+    // Main layout config including absolute header alignment and loading indicator elements
     popupBox.innerHTML = `
         <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.5rem;">
             <h2 style="margin: 0; font-size: 1.5rem; font-weight: bold; color: #111;">${bird.name}</h2>
             <span class="close-btn" style="cursor: pointer; font-size: 2rem; font-weight: 300; color: #666; line-height: 1; user-select: none;">&times;</span>
         </div>
         
-        <div class="popup-image-container" style="text-align: center; margin-bottom: 1rem; background: #ebebeb; border-radius: 4px; overflow: hidden; max-height: 340px; min-height: 200px; display: flex; align-items: center; justify-content: center;">
-            <img src="${largeImageSrc}" alt="${bird.name}" onload="this.style.opacity=1" style="width: 100%; height: auto; max-height: 340px; object-fit: cover; display: block; margin: 0 auto; opacity: 0; transition: opacity 0.2s ease; ${!bird.seen ? 'filter: grayscale(1) opacity(0.35); padding: 1.5rem; box-sizing: border-box; max-height: 180px; width: auto; opacity: 1;' : ''}">
+        <div class="popup-image-container" style="position: relative; text-align: center; margin-bottom: 1rem; background: #ebebeb; border-radius: 4px; overflow: hidden; max-height: 340px; min-height: 240px; display: flex; align-items: center; justify-content: center;">
+            
+            ${bird.seen ? `
+            <div class="image-spinner" style="position: absolute; width: 40px; height: 40px; border: 4px solid rgba(0,0,0,0.1); border-left-color: #333; border-radius: 50%; animation: popup-spin 0.8s linear infinite;"></div>
+            ` : ''}
+
+            <img src="${largeImageSrc}" alt="${bird.name}" 
+                 onload="this.style.opacity=1; let sp = this.previousElementSibling; if(sp && sp.classList.contains('image-spinner')) sp.remove();" 
+                 style="width: 100%; height: auto; max-height: 340px; object-fit: cover; display: block; margin: 0 auto; opacity: 0; transition: opacity 0.25s ease; z-index: 2; ${!bird.seen ? 'filter: grayscale(1) opacity(0.35); padding: 1.5rem; box-sizing: border-box; max-height: 180px; width: auto; opacity: 1;' : ''}">
         </div>
 
         <div class="popup-scroll-area" style="max-height: 40vh; overflow-y: auto; padding: 0 0.2rem;">
