@@ -159,28 +159,28 @@ function createBirdDetailPopup(navIndex) {
     const largeImageSrc = `${CONFIG.localImgDir}${bird.code}.jpg`;
     const targetUrl = bird.url || '#';
 
-    popupBox.innerHTML = `
-        <button class="close-btn" aria-label="Close popup">&times;</button>
-        <h2>
-            <a href="${targetUrl}" target="_blank" rel="noopener noreferrer" class="popup-title-link">
-                ${bird.name}
-            </a>
-        </h2>
+popupBox.innerHTML = `
+        <h2>${bird.name}</h2>
         
         <div class="popup-image-container" style="text-align: center; margin-bottom: 1rem; background: #ebebeb; border-radius: 4px; overflow: hidden; max-height: 340px; min-height: 200px; display: flex; align-items: center; justify-content: center;">
     <img src="${largeImageSrc}" alt="${bird.name}" onload="this.style.opacity=1" style="width: 100%; height: auto; max-height: 340px; object-fit: cover; display: block; margin: 0 auto; opacity: 0; transition: opacity 0.2s ease; ${!bird.seen ? 'filter: grayscale(1) opacity(0.35); padding: 1.5rem; box-sizing: border-box; max-height: 180px; width: auto; opacity: 1;' : ''}">
 </div>
 
-        <div class="popup-scroll-area">
-            <table>
-                <tr>
-                    <td class="info-label">Location Seen:</td>
-                    <td class="info-value" style="color: #111;">
-                        ${bird.where_seen || 'Not recorded'}
+
+        <div class="popup-scroll-area" style="max-height: 40vh; overflow-y: auto; padding: 0 0.2rem;">
+            <table style="width: 100%; border-collapse: collapse; margin-bottom: 0.5rem; font-size: 0.95rem;">
+                <tr style="border-bottom: 1px solid #eee;">
+                    <td style="padding: 0.5rem 0; color: #666; font-weight: 500;">Photo taken:</td>
+                    <td style="padding: 0.5rem 0; font-weight: 600; color: ${bird.seen ? '#111' : '#aaa'};">
+                        ${bird.seen ? (bird.where_seen || 'Not recorded') : '-'}
                     </td>
                 </tr>
             </table>
-        </div>9
+        </div>
+
+        <div style="text-align: center; margin-top: 1rem;">
+            <button class="close-btn" style="width: 100%; box-sizing: border-box; cursor: pointer; border: none; padding: 0.6rem 1rem;">Close</button>
+        </div>
     `;
 
     // Append Desktop Arrow overlays ONLY if multiple birds are visible to navigate through
