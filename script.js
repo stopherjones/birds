@@ -127,6 +127,10 @@ function createBirdDetailPopup(bird) {
     let overlay = document.querySelector('.popup-overlay');
     if (overlay) overlay.remove();
 
+    // Determine the current sorted list to allow swiping through items
+    const displayList = [...filteredBirds].sort((a, b) => a.name.localeCompare(b.name));
+    const currentIndex = displayList.findIndex(b => b.code === bird.code);
+
     overlay = document.createElement('div');
     overlay.className = 'popup-overlay';
     
@@ -135,8 +139,12 @@ function createBirdDetailPopup(bird) {
 
     const largeImageSrc = bird.seen ? `${CONFIG.localImgDir}${bird.code}.jpg` : CONFIG.placeholderImg;
 
+    // Matches layout from 1782038132051.jpeg: Title on left, absolute/flexed close "X" on right.
     popupBox.innerHTML = `
-        <h2>${bird.name}</h2>
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.5rem;">
+            <h2 style="margin: 0; font-size: 1.5rem; font-weight: bold; color: #111;">${bird.name}</h2>
+            <span class="close-btn" style="cursor: pointer; font-size: 2rem; font-weight: 300; color: #666; line-height: 1; user-select: none;">&times;</span>
+        </div>
         
         <div class="popup-image-container" style="text-align: center; margin-bottom: 1rem; background: #ebebeb; border-radius: 4px; overflow: hidden; max-height: 340px; min-height: 200px; display: flex; align-items: center; justify-content: center;">
             <img src="${largeImageSrc}" alt="${bird.name}" onload="this.style.opacity=1" style="width: 100%; height: auto; max-height: 340px; object-fit: cover; display: block; margin: 0 auto; opacity: 0; transition: opacity 0.2s ease; ${!bird.seen ? 'filter: grayscale(1) opacity(0.35); padding: 1.5rem; box-sizing: border-box; max-height: 180px; width: auto; opacity: 1;' : ''}">
@@ -146,15 +154,11 @@ function createBirdDetailPopup(bird) {
             <table style="width: 100%; border-collapse: collapse; margin-bottom: 0.5rem; font-size: 0.95rem;">
                 <tr style="border-bottom: 1px solid #eee;">
                     <td style="padding: 0.5rem 0; color: #666; font-weight: 500;">Photo taken:</td>
-                    <td style="padding: 0.5rem 0; font-weight: 600; color: ${bird.seen ? '#111' : '#aaa'};">
+                    <td style="padding: 0.5rem 0; font-weight: 600; color: ${bird.seen ? '#111' : '#aaa'}; text-align: right;">
                         ${bird.seen ? (bird.where_seen || 'Not recorded') : '-'}
                     </td>
                 </tr>
             </table>
-        </div>
-
-        <div style="text-align: center; margin-top: 1rem;">
-            <button class="close-btn" style="width: 100%; box-sizing: border-box; cursor: pointer; border: none; padding: 0.6rem 1rem;">Close</button>
         </div>
     `;
 
@@ -163,12 +167,41 @@ function createBirdDetailPopup(bird) {
 
     setTimeout(() => overlay.classList.add('active'), 10);
 
+    // Standard Close Window Logic
     overlay.addEventListener('click', (e) => {
         if (e.target === overlay || e.target.classList.contains('close-btn')) {
             overlay.classList.remove('active');
             setTimeout(() => overlay.remove(), 200);
         }
     });
+
+    // Swiping Logic implementation
+    let touchStartX = 0;
+    let touchEndX = 0;
+
+    popupBox.addEventListener('touchstart', (e) => {
+        touchStartX = e.changedTouches[0].screenX;
+    }, { passive: true });
+
+    popupBox.addEventListener('touchend', (e) => {
+        touchEndX = e.changedTouches[0].screenX;
+        handleSwipeGesture();
+    }, { passive: true });
+
+    function handleSwipeGesture() {
+        const swipeThreshold = 50; // Minimum distance in pixels to count as a swipe
+        if (touchStartX - touchEndX > swipeThreshold) {
+            // Swiped Left -> Load Next Bird
+            if (currentIndex < displayList.length - 1) {
+                createBirdDetailPopup(displayList[currentIndex + 1]);
+            }
+        } else if (touchEndX - touchStartX > swipeThreshold) {
+            // Swiped Right -> Load Previous Bird
+            if (currentIndex > 0) {
+                createBirdDetailPopup(displayList[currentIndex - 1]);
+            }
+        }
+    }
 }
 
 function updateSightingStatistics() {
