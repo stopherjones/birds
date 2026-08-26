@@ -100,7 +100,8 @@ function renderGalleryGrid() {
         img.setAttribute('loading', 'lazy');
 
         if (bird.seen) {
-            img.src = `${CONFIG.localImgDir}thumbs/${bird.code}.jpg`;
+            // Updated to load .webp thumbnail
+            img.src = `${CONFIG.localImgDir}thumbs/${bird.code}.webp`;
             img.alt = bird.name;
         } else {
             img.src = CONFIG.placeholderImg;
@@ -137,7 +138,8 @@ function createBirdDetailPopup(bird) {
     const popupBox = document.createElement('div');
     popupBox.className = 'popup-box';
 
-    const largeImageSrc = bird.seen ? `${CONFIG.localImgDir}${bird.code}.jpg` : CONFIG.placeholderImg;
+    // Updated to load .webp master image
+    const largeImageSrc = bird.seen ? `${CONFIG.localImgDir}${bird.code}.webp` : CONFIG.placeholderImg;
 
     // Injecting a CSS keyframe rule dynamically if it doesn't exist yet for the spinner animation
     if (!document.getElementById('spinner-styles')) {
