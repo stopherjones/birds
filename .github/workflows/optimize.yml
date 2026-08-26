@@ -46,13 +46,16 @@ jobs:
           birds_list = data if isinstance(data, list) else data.get('birds', [])
           json_updated = False
 
+          # Added .webp to accepted extensions
+          valid_extensions = ('.jpg', '.jpeg', '.png', '.webp')
+
           for filename in os.listdir(bird_dir):
-              if os.path.isdir(os.path.join(bird_dir, filename)) or not filename.lower().endswith(('.jpg', '.jpeg', '.png')):
+              if os.path.isdir(os.path.join(bird_dir, filename)) or not filename.lower().endswith(valid_extensions):
                   continue
                   
               raw_name, ext = os.path.splitext(filename)
               
-              # 1. SPECIAL MODE: Suffix flag is present (e.g., bird_code__Location.jpg or bird_code__.jpg)
+              # 1. SPECIAL MODE: Suffix flag is present (e.g., bird_code__Location.jpg)
               if '__' in raw_name:
                   parts = raw_name.split('__', 1)
                   bird_code = parts[0].strip()
@@ -98,7 +101,7 @@ jobs:
               print("Database records synchronized successfully.")
           EOF
 
-      - name: Compress Masters and Generate Thumbnails
+      - name: Convert Masters and Generate WebP Thumbnails
         run: |
           python - <<EOF
           import os
@@ -108,26 +111,37 @@ jobs:
           thumb_dir = os.path.join(bird_dir, "thumbs")
           os.makedirs(thumb_dir, exist_ok=True)
 
+          valid_extensions = ('.jpg', '.jpeg', '.png', '.webp')
+
           for filename in os.listdir(bird_dir):
               if os.path.isdir(os.path.join(bird_dir, filename)):
                   continue
                   
-              if filename.lower().endswith(('.jpg', '.jpeg', '.png')):
+              if filename.lower().endswith(valid_extensions):
                   img_path = os.path.join(bird_dir, filename)
-                  thumb_path = os.path.join(thumb_dir, filename)
+                  raw_name, ext = os.path.splitext(filename)
+                  
+                  # Standardise output to .webp
+                  webp_filename = f"{raw_name}.webp"
+                  webp_img_path = os.path.join(bird_dir, webp_filename)
+                  thumb_path = os.path.join(thumb_dir, webp_filename)
                   
                   with Image.open(img_path) as img:
-                      if os.path.getsize(img_path) > 200000:
-                          img.save(img_path, "JPEG", quality=80, optimize=True)
-                          print(f"Optimized master: {filename}")
+                      # Convert and save master as WebP
+                      img.save(webp_img_path, "WEBP", quality=80, method=4)
+                      print(f"Converted/Optimized master to WebP: {webp_filename}")
                       
-                      if not os.path.exists(thumb_path):
-                          img.thumbnail((400, 400))
-                          img.save(thumb_path, "JPEG", quality=75, optimize=True)
-                          print(f"Generated thumbnail for: {filename}")
+                      # Generate WebP thumbnail
+                      img.thumbnail((400, 400))
+                      img.save(thumb_path, "WEBP", quality=75, method=4)
+                      print(f"Generated WebP thumbnail for: {webp_filename}")
+                  
+                  # Clean up old extension files if they were uploaded as .jpg/.png
+                  if img_path != webp_img_path and os.path.exists(img_path):
+                      os.remove(img_path)
           EOF
 
       - name: Commit Optimized Images Automatically
         uses: stefanzweifel/git-auto-commit-action@v5
         with:
-          commit_message: "Automated image processing, asset purge, and database sync [skip ci]"
+          commit_message: "Automated WebP conversion, asset optimization, and database sync [skip ci]"
