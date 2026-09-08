@@ -31,6 +31,7 @@ jobs:
           python - <<EOF
           import json
           import os
+          import re
 
           json_path = 'birds.json'
           bird_dir = 'images/birds'
@@ -45,9 +46,15 @@ jobs:
 
           birds_list = data if isinstance(data, list) else data.get('birds', [])
           json_updated = False
-
-          # Added .webp to accepted extensions
           valid_extensions = ('.jpg', '.jpeg', '.png', '.webp')
+
+          def normalise(text):
+              if not text:
+                  return ''
+              text = text.lower()
+              text = re.sub(r"['/]", "", text)        # Remove apostrophes and slashes
+              text = re.sub(r"[\s\-]+", "_", text)    # Convert spaces and hyphens to underscores
+              return text.strip('_')
 
           for filename in os.listdir(bird_dir):
               if os.path.isdir(os.path.join(bird_dir, filename)) or not filename.lower().endswith(valid_extensions):
@@ -55,45 +62,65 @@ jobs:
                   
               raw_name, ext = os.path.splitext(filename)
               
-              # 1. SPECIAL MODE: Suffix flag is present (e.g., bird_code__Location.jpg)
+              # 1. SPECIAL MODE: Suffix flag present (e.g., Great Black-backed Gull__Bryher, Isles of Scilly.jpg)
               if '__' in raw_name:
                   parts = raw_name.split('__', 1)
-                  bird_code = parts[0].strip()
+                  bird_input = parts[0].strip()
                   provided_location = parts[1].strip()
 
-                  bird = next((b for b in birds_list if b.get('code') == bird_code), None)
+                  target = normalise(bird_input)
+                  bird = next((b for b in birds_list if normalise(b.get('code')) == target or normalise(b.get('name')) == target), None)
+
                   if bird:
-                      final_filename = f"{bird_code}{ext.lower()}"
+                      canonical_code = bird.get('code')
+                      final_filename = f"{canonical_code}{ext.lower()}"
                       dest_image_path = os.path.join(bird_dir, final_filename)
                       dest_thumb_path = os.path.join(thumb_dir, final_filename)
 
-                      if os.path.exists(dest_image_path): os.remove(dest_image_path)
-                      if os.path.exists(dest_thumb_path): os.remove(dest_thumb_path)
+                      if os.path.exists(dest_image_path) and dest_image_path != os.path.join(bird_dir, filename): 
+                          os.remove(dest_image_path)
+                      if os.path.exists(dest_thumb_path): 
+                          os.remove(dest_thumb_path)
 
                       bird['seen'] = True
                       
                       if provided_location:
                           bird['where_seen'] = provided_location
-                          print(f"Mode A: Updated {bird_code} with fresh location: {provided_location}")
+                          print(f"Mode A: Updated {canonical_code} with location: {provided_location}")
                       else:
-                          print(f"Mode B: Swapped photo for {bird_code} (retained location: {bird.get('where_seen', '')})")
+                          print(f"Mode B: Swapped photo for {canonical_code}")
 
                       os.rename(os.path.join(bird_dir, filename), dest_image_path)
                       json_updated = True
+                  else:
+                      print(f"Warning: No match found in database for '{bird_input}'")
 
-              # 2. DIRECT MODE: Clean filename dropped directly (e.g., bird_code.jpg)
+              # 2. DIRECT MODE: Clean filename dropped directly (e.g., Great Black-backed Gull.jpg)
               else:
-                  bird_code = raw_name.strip()
-                  bird = next((b for b in birds_list if b.get('code') == bird_code), None)
+                  bird_input = raw_name.strip()
+                  target = normalise(bird_input)
+                  bird = next((b for b in birds_list if normalise(b.get('code')) == target or normalise(b.get('name')) == target), None)
                   
-                  if bird and not bird.get('seen'):
-                      dest_thumb_path = os.path.join(thumb_dir, f"{bird_code}{ext.lower()}")
-                      if os.path.exists(dest_thumb_path): os.remove(dest_thumb_path)
+                  if bird:
+                      canonical_code = bird.get('code')
+                      final_filename = f"{canonical_code}{ext.lower()}"
+                      dest_image_path = os.path.join(bird_dir, final_filename)
+
+                      if filename != final_filename:
+                          if os.path.exists(dest_image_path):
+                              os.remove(dest_image_path)
+                          os.rename(os.path.join(bird_dir, filename), dest_image_path)
+
+                      if not bird.get('seen'):
+                          dest_thumb_path = os.path.join(thumb_dir, f"{canonical_code}{ext.lower()}")
+                          if os.path.exists(dest_thumb_path): 
+                              os.remove(dest_thumb_path)
+                          
+                          bird['seen'] = True
+                          bird['where_seen'] = "Location not recorded"
+                          print(f"Mode C: Direct upload activated {canonical_code}")
                       
-                      bird['seen'] = True
-                      bird['where_seen'] = "Location not recorded"
                       json_updated = True
-                      print(f"Mode C: Direct upload activated new species {bird_code} with default location.")
 
           if json_updated:
               with open(json_path, 'w') as f:
