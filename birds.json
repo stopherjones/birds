@@ -2132,7 +2132,7 @@
         "name": "Buff-breasted Sandpiper",
         "code": "buff_breasted_sandpiper__tresco,_isles_of_scilly",
         "seen": true,
-        "where_seen": "Tresco, Isles of Scilly",
+        "where_seen": "tresco,_isles_of_scilly",
         "photos": [],
         "url": "",
         "is_other_bird": true
