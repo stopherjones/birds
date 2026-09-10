@@ -2120,15 +2120,6 @@
         "url": "https://www.rspb.org.uk/birds-and-wildlife/yellowhammer"
     },
     {
-        "name": "blackcap_Pocklington Canal",
-        "code": "blackcap_pocklington_canal__location_not_recorded",
-        "seen": true,
-        "where_seen": "Location not recorded",
-        "photos": [],
-        "url": "",
-        "is_other_bird": true
-    },
-    {
         "name": "Buff-breasted Sandpiper",
         "code": "buff_breasted_sandpiper__tresco,_isles_of_scilly",
         "seen": true,
