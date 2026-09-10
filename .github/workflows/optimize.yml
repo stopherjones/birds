@@ -52,9 +52,32 @@ jobs:
               if not text:
                   return ''
               text = text.lower()
-              text = re.sub(r"['/]", "", text)        # Remove apostrophes and slashes
-              text = re.sub(r"[\s\-]+", "_", text)    # Convert spaces and hyphens to underscores
+              text = re.sub(r"['/]", "", text)
+              text = re.sub(r"[\s\-]+", "_", text)
               return text.strip('_')
+
+          def create_other_bird_entry(bird_name, location):
+              safe_name = bird_name.strip()
+              safe_location = (location or 'Location not recorded').strip() or 'Location not recorded'
+              base_code = normalise(f"{safe_name}__{safe_location}")
+
+              candidate = base_code
+              suffix = 1
+              while any(normalise(b.get('code', '')) == candidate for b in birds_list):
+                  candidate = f"{base_code}_{suffix}"
+                  suffix += 1
+
+              new_bird = {
+                  'name': safe_name,
+                  'code': candidate,
+                  'seen': True,
+                  'where_seen': safe_location,
+                  'photos': [],
+                  'url': '',
+                  'is_other_bird': True
+              }
+              birds_list.append(new_bird)
+              return new_bird
 
           for filename in os.listdir(bird_dir):
               if os.path.isdir(os.path.join(bird_dir, filename)) or not filename.lower().endswith(valid_extensions):
@@ -77,23 +100,26 @@ jobs:
                       dest_image_path = os.path.join(bird_dir, final_filename)
                       dest_thumb_path = os.path.join(thumb_dir, final_filename)
 
-                      if os.path.exists(dest_image_path) and dest_image_path != os.path.join(bird_dir, filename): 
+                      if os.path.exists(dest_image_path) and dest_image_path != os.path.join(bird_dir, filename):
                           os.remove(dest_image_path)
-                      if os.path.exists(dest_thumb_path): 
+                      if os.path.exists(dest_thumb_path):
                           os.remove(dest_thumb_path)
 
                       bird['seen'] = True
-                      
-                      if provided_location:
-                          bird['where_seen'] = provided_location
-                          print(f"Mode A: Updated {canonical_code} with location: {provided_location}")
-                      else:
-                          print(f"Mode B: Swapped photo for {canonical_code}")
+                      bird['where_seen'] = provided_location or bird.get('where_seen') or 'Location not recorded'
+                      print(f"Mode A: Updated {canonical_code} with location: {bird['where_seen']}")
 
                       os.rename(os.path.join(bird_dir, filename), dest_image_path)
                       json_updated = True
                   else:
-                      print(f"Warning: No match found in database for '{bird_input}'")
+                      bird = create_other_bird_entry(bird_input, provided_location)
+                      final_filename = f"{bird['code']}{ext.lower()}"
+                      dest_image_path = os.path.join(bird_dir, final_filename)
+                      if os.path.exists(dest_image_path):
+                          os.remove(dest_image_path)
+                      os.rename(os.path.join(bird_dir, filename), dest_image_path)
+                      print(f"Mode A-Other: Added new other bird entry '{bird_input}' at '{bird['where_seen']}'")
+                      json_updated = True
 
               # 2. DIRECT MODE: Clean filename dropped directly (e.g., Great Black-backed Gull.jpg)
               else:
@@ -113,13 +139,22 @@ jobs:
 
                       if not bird.get('seen'):
                           dest_thumb_path = os.path.join(thumb_dir, f"{canonical_code}{ext.lower()}")
-                          if os.path.exists(dest_thumb_path): 
+                          if os.path.exists(dest_thumb_path):
                               os.remove(dest_thumb_path)
                           
                           bird['seen'] = True
                           bird['where_seen'] = "Location not recorded"
                           print(f"Mode C: Direct upload activated {canonical_code}")
                       
+                      json_updated = True
+                  else:
+                      bird = create_other_bird_entry(bird_input, 'Location not recorded')
+                      final_filename = f"{bird['code']}{ext.lower()}"
+                      dest_image_path = os.path.join(bird_dir, final_filename)
+                      if os.path.exists(dest_image_path):
+                          os.remove(dest_image_path)
+                      os.rename(os.path.join(bird_dir, filename), dest_image_path)
+                      print(f"Mode C-Other: Added new other bird entry '{bird_input}'")
                       json_updated = True
 
           if json_updated:

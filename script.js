@@ -9,11 +9,16 @@ const CONFIG = {
     localImgDir: 'images/birds/'
 };
 let allBirds = [];
+let ukBirds = [];
+let otherBirds = [];
 let filteredBirds = [];
+let filteredOtherBirds = [];
 
 const DOM = {
     statText: document.getElementById('statText'),
     gallery: document.getElementById('gallery'),
+    otherBirdsSection: document.getElementById('otherBirdsSection'),
+    otherBirdsGallery: document.getElementById('otherBirdsGallery'),
     searchInput: document.getElementById('searchInput'),
     filterSeen: document.getElementById('filterSeen'),
     filterUnseen: document.getElementById('filterUnseen')
@@ -30,8 +35,11 @@ function initApp() {
             return response.json();
         })
         .then(data => {
-            allBirds = data;
-            filteredBirds = [...allBirds];
+            allBirds = Array.isArray(data) ? data : [];
+            ukBirds = allBirds.filter(bird => bird.is_other_bird !== true);
+            otherBirds = allBirds.filter(bird => bird.is_other_bird === true);
+            filteredBirds = [...ukBirds];
+            filteredOtherBirds = [...otherBirds];
             
             setupFilterListeners();
             applyFiltersAndRender();
@@ -57,19 +65,21 @@ function applyFiltersAndRender() {
     const showSeen = DOM.filterSeen ? DOM.filterSeen.checked : true;
     const showUnseen = DOM.filterUnseen ? DOM.filterUnseen.checked : true;
 
-    filteredBirds = allBirds.filter(bird => {
-        // 1. Text Search Input Parsing (Matches against species name only)
+    const matchesFilters = (bird) => {
         const matchesSearch = !searchQuery || bird.name.toLowerCase().includes(searchQuery);
 
-        // 2. Sighting Checkbox Filter Status Parsing
         let matchesStatus = false;
         if (bird.seen && showSeen) matchesStatus = true;
         if (!bird.seen && showUnseen) matchesStatus = true;
 
         return matchesSearch && matchesStatus;
-    });
+    };
+
+    filteredBirds = ukBirds.filter(matchesFilters);
+    filteredOtherBirds = otherBirds.filter(matchesFilters);
 
     renderGalleryGrid();
+    renderOtherBirdsGrid();
     updateSightingStatistics();
 }
 
@@ -78,11 +88,10 @@ function renderGalleryGrid() {
     DOM.gallery.innerHTML = '';
 
     if (filteredBirds.length === 0) {
-        DOM.gallery.innerHTML = `<div class="empty-state">No species observed matching these filters.</div>`;
+        DOM.gallery.innerHTML = `<div class="empty-state">No UK species observed matching these filters.</div>`;
         return;
     }
 
-    // Default Fixed Behavior: Always Sorted Alphabetically A-Z
     const displayList = [...filteredBirds].sort((a, b) => a.name.localeCompare(b.name));
     const gridContainer = document.createElement('div');
     gridContainer.className = 'gallery-grid';
@@ -100,7 +109,6 @@ function renderGalleryGrid() {
         img.setAttribute('loading', 'lazy');
 
         if (bird.seen) {
-            // Updated to load .webp thumbnail
             img.src = `${CONFIG.localImgDir}thumbs/${bird.code}.webp`;
             img.alt = bird.name;
         } else {
@@ -124,12 +132,60 @@ function renderGalleryGrid() {
     DOM.gallery.appendChild(gridContainer);
 }
 
+function renderOtherBirdsGrid() {
+    if (!DOM.otherBirdsGallery) return;
+    DOM.otherBirdsGallery.innerHTML = '';
+
+    if (filteredOtherBirds.length === 0) {
+        DOM.otherBirdsGallery.innerHTML = `<div class="empty-state">No other birds recorded yet.</div>`;
+        return;
+    }
+
+    const displayList = [...filteredOtherBirds].sort((a, b) => a.name.localeCompare(b.name));
+    const gridContainer = document.createElement('div');
+    gridContainer.className = 'gallery-grid';
+
+    displayList.forEach(bird => {
+        const item = document.createElement('div');
+        item.className = 'gallery-item';
+        item.style.cursor = 'pointer';
+
+        const wrapper = document.createElement('div');
+        wrapper.className = 'flag-wrapper';
+
+        const img = document.createElement('img');
+        img.className = 'gallery-image';
+        img.setAttribute('loading', 'lazy');
+
+        if (bird.seen) {
+            img.src = `${CONFIG.localImgDir}thumbs/${bird.code}.webp`;
+            img.alt = bird.name;
+        } else {
+            img.src = CONFIG.placeholderImg;
+            img.alt = `${bird.name} (Unseen Silhouette)`;
+            img.classList.add('greyed-out');
+        }
+        wrapper.appendChild(img);
+
+        const caption = document.createElement('div');
+        caption.className = 'caption';
+        caption.textContent = bird.name;
+
+        item.appendChild(wrapper);
+        item.appendChild(caption);
+
+        item.addEventListener('click', () => createBirdDetailPopup(bird));
+        gridContainer.appendChild(item);
+    });
+
+    DOM.otherBirdsGallery.appendChild(gridContainer);
+}
+
 function createBirdDetailPopup(bird) {
     let overlay = document.querySelector('.popup-overlay');
     if (overlay) overlay.remove();
 
-    // Determine the current sorted list to allow swiping through items
-    const displayList = [...filteredBirds].sort((a, b) => a.name.localeCompare(b.name));
+    const displayList = (bird.is_other_bird === true ? [...filteredOtherBirds] : [...filteredBirds]).sort((a, b) => a.name.localeCompare(b.name));
     const currentIndex = displayList.findIndex(b => b.code === bird.code);
 
     overlay = document.createElement('div');
@@ -228,7 +284,8 @@ function createBirdDetailPopup(bird) {
 
 function updateSightingStatistics() {
     if (!DOM.statText) return;
-    const totalCount = allBirds.length;
-    const seenCount = allBirds.filter(bird => bird.seen === true).length;
+    const ukBirdList = allBirds.filter(bird => bird.is_other_bird !== true);
+    const totalCount = ukBirdList.length;
+    const seenCount = ukBirdList.filter(bird => bird.seen === true).length;
     DOM.statText.textContent = `${seenCount} species seen out of ${totalCount} total tracked species`;
 }
