@@ -506,8 +506,8 @@
     {
         "name": "Gadwall",
         "code": "gadwall",
-        "seen": false,
-        "where_seen": "",
+        "seen": true,
+        "where_seen": "Far Ings, Lincolnshire",
         "photos": [],
         "url": "https://www.rspb.org.uk/birds-and-wildlife/gadwall"
     },
